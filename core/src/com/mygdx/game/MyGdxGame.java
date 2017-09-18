@@ -24,7 +24,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
     /* Called when the Application is first created. */
     @Override public void create() {
-        System.out.println("Creating game");
+        Gdx.app.log("MyGdxGame", "creating game");
 
         this.batch  = new SpriteBatch();
         this.screen = new MainScreen(this);
@@ -64,7 +64,7 @@ public class MyGdxGame extends ApplicationAdapter {
         }
 
         if (this.oneSecondTimer >= 1) {
-            System.out.printf("%d UPS, %d FPS %n", this.updateCountLastSecond, this.frameCountLastSecond);
+            Gdx.app.log("MyGdxGame", String.format("%d UPS, %d FPS", this.updateCountLastSecond, this.frameCountLastSecond));
             this.updateCountLastSecond = 0;
             this.frameCountLastSecond  = 0;
             this.oneSecondTimer        = 0;
@@ -73,30 +73,30 @@ public class MyGdxGame extends ApplicationAdapter {
 
     /* Called when the Application is paused, usually when it's not active or visible on screen. */
     @Override public void pause() {
-        System.out.println("Pausing game");
+        Gdx.app.log("MyGdxGame", "pausing game");
         this.screen.pause();
     }
 
     /* Called when the Application is resumed from a paused state, usually when it regains focus. */
     @Override public void resume() {
-        System.out.println("Resuming game");
+        Gdx.app.log("MyGdxGame", "resuming game");
         this.screen.resume();
     }
 
     /* Called when the Application is resized. */
     @Override public void resize(int width, int height) {
-        System.out.println("The window was resized");
+        Gdx.app.log("MyGdxGame", "the window was resized");
     }
 
     /* Called when the Application is destroyed. */
     @Override public void dispose() {
-        System.out.println("Tearing down game");
+        Gdx.app.log("MyGdxGame", "tearing down game");
         this.screen.dispose();
         this.batch.dispose();
     }
 
     public void setScreen(MyScreen screen) {
-        System.out.println("Entering new screen");
+        Gdx.app.log("MyGdxGame", "entering new screen");
         this.screen.dispose();
         this.screen = screen;
     }
