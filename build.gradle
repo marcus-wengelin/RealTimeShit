@@ -36,7 +36,7 @@ task run(type: JavaExec) {
 }
 
 task fatJar(type: Jar) {
-    // from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)
     from {configurations.compile.collect {zipTree(it)}}
     from files(project.assetsDir);
