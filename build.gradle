@@ -1,0 +1,47 @@
+apply plugin: "java"
+
+sourceSets.main.java.srcDir "core/src"
+
+ext {
+    gdxVersion = '1.9.6'
+    mainClassName = "com.mygdx.game.DesktopLauncher"
+    assetsDir = new File("core/assets");
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+}
+
+def genericTask = {
+    classpath       = sourceSets.main.runtimeClasspath
+    standardInput   = System.in
+    workingDir      = assetsDir
+    ignoreExitValue = true
+    gradle.startParameter.logLevel = org.gradle.api.logging.LogLevel.QUIET
+}
+
+task run(type: JavaExec) {
+    configure genericTask
+    main = mainClassName
+}
+
+task fatJar(type: Jar) {
+    // from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    from files(project.assetsDir);
+
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
