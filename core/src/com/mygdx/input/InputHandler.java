@@ -6,6 +6,8 @@ import com.badlogic.gdx.InputAdapter;
 public class InputHandler {
 
     private int scroll;
+    private int mouseX;
+    private int mouseY;
 
     public InputHandler() {
         this.scroll = 0;
@@ -23,6 +25,12 @@ public class InputHandler {
     private class MyInputProcesser extends InputAdapter {
         public boolean scrolled(int amount) {
             scroll = amount;
+            return true;
+        }
+
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            mouseX = screenX;
+            mouseY = screenY;
             return true;
         }
     }

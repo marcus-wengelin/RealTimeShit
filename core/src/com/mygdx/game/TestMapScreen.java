@@ -1,11 +1,14 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader.Parameters;
 
 public class TestMapScreen extends MyScreen {
 
@@ -13,14 +16,17 @@ public class TestMapScreen extends MyScreen {
     private IsometricTiledMapRenderer mapRenderer;
     private OrthographicCamera        camera;
     private InputHandler              input;
+	private GameObject                player;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
-        this.map         = new TmxMapLoader().load("maps/test/test.tmx");
+        Parameters params = new Parameters();
+        this.map         = new TmxMapLoader().load("maps/test/test.tmx", params);
         this.mapRenderer = new IsometricTiledMapRenderer(this.map);
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
         this.input = new InputHandler();
+        this.player = new GameObject(new Texture("sprites/skellington.png"), 1, 14);
     }
 
     public void update(float dt) {
@@ -38,11 +44,25 @@ public class TestMapScreen extends MyScreen {
         this.camera.update();
         this.mapRenderer.setView(this.camera);
 
+        /*
+        map.x = (screen.x/tileWidthHalf + screen.y/tileHeightHalf) / 2
+        map.y = (screen.y/tileHeightHalf - screen.x/tileWidthHalf) / 2
+        */
+        int mY = Gdx.graphics.getHeight() - Gdx.input.getY();
+        int mX = Gdx.input.getX();
+
+        System.out.println("TileX: "+((mX/32 + mY/16)));
+        System.out.println("TileY: "+((mY/16 - mX/32)));
+
         this.input.resetInputs();
     }
 
     public void render(float a) {
         this.mapRenderer.render();
+        SpriteBatch batch = (SpriteBatch) this.mapRenderer.getBatch();
+        batch.begin();
+        this.player.render(batch);
+        batch.end();
     }
 
     public void pause() {}
@@ -52,5 +72,4 @@ public class TestMapScreen extends MyScreen {
         this.map.dispose();
         this.mapRenderer.dispose();
     }
-
 }
