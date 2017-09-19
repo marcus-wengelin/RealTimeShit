@@ -2,7 +2,7 @@
 <tileset name="tileset_cave" tilewidth="64" tileheight="64" tilecount="48" columns="16">
  <tileoffset x="0" y="16"/>
  <grid orientation="isometric" width="64" height="32"/>
- <image source="tileset_cave.png" width="1024" height="192"/>
+ <image source="tileset_cave.png" width="1024" height="256"/>
  <terraintypes>
   <terrain name="Water" tile="40"/>
   <terrain name="Ground" tile="0"/>

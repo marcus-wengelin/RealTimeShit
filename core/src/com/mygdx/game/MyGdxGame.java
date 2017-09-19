@@ -27,7 +27,7 @@ public class MyGdxGame extends ApplicationAdapter {
         Gdx.app.log("MyGdxGame", "creating game");
 
         this.batch  = new SpriteBatch();
-        this.screen = new MainScreen(this);
+        this.screen = new TestMapScreen(this);
 
         this.accumulator           = 0;
         this.timeBetweenUpdates    = 1/(float)Constants.UPDATES_PER_SECOND;
@@ -56,9 +56,9 @@ public class MyGdxGame extends ApplicationAdapter {
         if (this.frameLimiterTimer >= this.timeBetweenFrames) {
             Gdx.gl.glClearColor(1, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            batch.begin();
+            this.batch.begin();
             this.screen.render(this.accumulator/this.timeBetweenUpdates);
-            batch.end();
+            this.batch.end();
             this.frameCountLastSecond++;
             this.frameLimiterTimer -= this.timeBetweenFrames;
         }
