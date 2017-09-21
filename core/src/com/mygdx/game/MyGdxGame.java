@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import com.mygdx.utils.TextRenderer;
 import com.mygdx.utils.Constants;
 
 public class MyGdxGame extends ApplicationAdapter {
@@ -27,6 +29,9 @@ public class MyGdxGame extends ApplicationAdapter {
         Gdx.app.log("MyGdxGame", "creating game");
 
         this.batch  = new SpriteBatch();
+        TextRenderer.init();
+        TextRenderer.setSpriteBatch(this.batch);
+        TextRenderer.loadFonts("fonts");
         this.screen = new TestMapScreen(this);
 
         this.accumulator           = 0;
@@ -93,6 +98,7 @@ public class MyGdxGame extends ApplicationAdapter {
         Gdx.app.log("MyGdxGame", "tearing down game");
         this.screen.dispose();
         this.batch.dispose();
+        TextRenderer.dispose();
     }
 
     public void setScreen(MyScreen screen) {

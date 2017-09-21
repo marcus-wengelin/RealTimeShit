@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader.Parameters;
 
+import com.mygdx.utils.TextRenderer;
+import com.mygdx.utils.TextRenderer.Alignment;
+
 public class TestMapScreen extends MyScreen {
 
     private TiledMap                  map;
@@ -26,7 +29,7 @@ public class TestMapScreen extends MyScreen {
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
         this.input = new InputHandler();
-        this.player = new GameObject(new Texture("sprites/skellington.png"), 1, 14);
+        this.player = new GameObject(new Texture("sprites/jack.png"), 1, 14);
     }
 
     public void update(float dt) {
@@ -61,6 +64,7 @@ public class TestMapScreen extends MyScreen {
         this.mapRenderer.render();
         SpriteBatch batch = (SpriteBatch) this.mapRenderer.getBatch();
         batch.begin();
+        TextRenderer.draw("fipps_modified", "debug", 0, 0, Alignment.TOP_RIGHT);
         this.player.render(batch);
         batch.end();
     }
