@@ -7,8 +7,8 @@ public class GameObject {
 
     private Texture tex;
 
-    private int xTile;
-    private int yTile;
+    public int xTile;
+    public int yTile;
     private float xCoord;
     private float yCoord;
 

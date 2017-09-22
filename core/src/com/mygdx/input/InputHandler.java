@@ -6,8 +6,8 @@ import com.badlogic.gdx.InputAdapter;
 public class InputHandler {
 
     private int scroll;
-    private int mouseX;
-    private int mouseY;
+    public int mouseX;
+    public int mouseY;
 
     public InputHandler() {
         this.scroll = 0;

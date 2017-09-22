@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,6 +21,7 @@ public class TestMapScreen extends MyScreen {
     private OrthographicCamera        camera;
     private InputHandler              input;
 	private GameObject                player;
+    private GameObject                marker;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
@@ -29,7 +31,8 @@ public class TestMapScreen extends MyScreen {
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
         this.input = new InputHandler();
-        this.player = new GameObject(new Texture("sprites/jack.png"), 1, 14);
+        this.player = new GameObject(new Texture("sprites/jack.png"), 0, 0);
+        this.marker = new GameObject(new Texture("sprites/marker.png"), 1, 14);
     }
 
     public void update(float dt) {
@@ -51,11 +54,12 @@ public class TestMapScreen extends MyScreen {
         map.x = (screen.x/tileWidthHalf + screen.y/tileHeightHalf) / 2
         map.y = (screen.y/tileHeightHalf - screen.x/tileWidthHalf) / 2
         */
-        int mY = Gdx.graphics.getHeight() - Gdx.input.getY();
-        int mX = Gdx.input.getX();
-
-        System.out.println("TileX: "+((mX/32 + mY/16)));
-        System.out.println("TileY: "+((mY/16 - mX/32)));
+        if ( Gdx.input.isButtonPressed(0) ) {
+            Vector3 worldCoordinates = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            marker.yTile = (int)((worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - .5);
+            marker.xTile = (int)((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + .5);
+            aStar(player.xTile, player.yTile, marker.xTile, marker.yTile);
+        }
 
         this.input.resetInputs();
     }
@@ -64,8 +68,9 @@ public class TestMapScreen extends MyScreen {
         this.mapRenderer.render();
         SpriteBatch batch = (SpriteBatch) this.mapRenderer.getBatch();
         batch.begin();
-        TextRenderer.draw("fipps_modified", "debug", 0, 0, Alignment.TOP_RIGHT);
+        // TextRenderer.draw("fipps_modified", "abcdefghijklmnopqrstuvwxyz", 0, 0, Alignment.TOP_RIGHT);
         this.player.render(batch);
+        this.marker.render(batch);
         batch.end();
     }
 
