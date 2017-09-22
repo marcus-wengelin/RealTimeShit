@@ -12,7 +12,11 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader.Parameters;
 
 import com.mygdx.utils.TextRenderer;
+import com.mygdx.utils.PathFinder;
+import com.mygdx.utils.PathFinder.Node;
 import com.mygdx.utils.TextRenderer.Alignment;
+
+import java.util.ArrayList;
 
 public class TestMapScreen extends MyScreen {
 
@@ -22,6 +26,7 @@ public class TestMapScreen extends MyScreen {
     private InputHandler              input;
 	private GameObject                player;
     private GameObject                marker;
+    private ArrayList<GameObject>     pathMarkers;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
@@ -33,6 +38,9 @@ public class TestMapScreen extends MyScreen {
         this.input = new InputHandler();
         this.player = new GameObject(new Texture("sprites/jack.png"), 0, 0);
         this.marker = new GameObject(new Texture("sprites/marker.png"), 1, 14);
+        this.pathMarkers = new ArrayList<GameObject>();
+
+        PathFinder.setMap(this.map);
     }
 
     public void update(float dt) {
@@ -58,7 +66,10 @@ public class TestMapScreen extends MyScreen {
             Vector3 worldCoordinates = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             marker.yTile = (int)((worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - .5);
             marker.xTile = (int)((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + .5);
-            aStar(player.xTile, player.yTile, marker.xTile, marker.yTile);
+            ArrayList<Node> pathNodes = PathFinder.aStarSearch(player.xTile, player.yTile, marker.xTile, marker.yTile);
+            pathMarkers.clear();
+            for (Node n : pathNodes)
+                pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), n.x, n.y));
         }
 
         this.input.resetInputs();
@@ -71,6 +82,8 @@ public class TestMapScreen extends MyScreen {
         // TextRenderer.draw("fipps_modified", "abcdefghijklmnopqrstuvwxyz", 0, 0, Alignment.TOP_RIGHT);
         this.player.render(batch);
         this.marker.render(batch);
+        for (GameObject go : pathMarkers)
+            go.render(batch);
         batch.end();
     }
 

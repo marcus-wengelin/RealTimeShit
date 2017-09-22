@@ -4,6 +4,9 @@
 # Log file
 *.log
 
+# Vim swp-files
+*.swp
+
 # ignore gradle build files
 .gradle/*
 build/*
