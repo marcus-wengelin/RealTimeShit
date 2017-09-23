@@ -4,46 +4,31 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class PathFinder {
-    public static class Node {
-        public int x;
-        public int y;
-        public Node(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Node) {
-                Node n = (Node)o;
-                return (x == n.x && y == n.y);
-            } else return false;
-        }
-    }
 
     private static TiledMap map = null;
 
     private PathFinder() {}
 
     public static void setMap(TiledMap tiledMap) {
-        map = tiledMap; 
+        map = tiledMap;
     }
 
     private static TiledMapTileLayer getCollisionLayer() {
         return (TiledMapTileLayer)map.getLayers().get("Collision0");
     }
 
-    private static double heuristicCost(Node s, Node g) {
+    private static double heuristicCost(GridPoint2 s, GridPoint2 g) {
         return Math.sqrt((s.x - g.x)*(s.x - g.x) + (s.y - g.y)*(s.y - g.y));
     }
 
-    private static ArrayList<Node> reconstructPath(Hashtable<Node, Node> cameFrom, Node current) {
-        ArrayList<Node> path = new ArrayList<Node>();
+    private static ArrayList<GridPoint2> reconstructPath(Hashtable<GridPoint2, GridPoint2> cameFrom, GridPoint2 current) {
+        ArrayList<GridPoint2> path = new ArrayList<GridPoint2>();
         path.add(current);
         while (cameFrom.containsKey(current)) {
             current = cameFrom.get(current);
@@ -52,74 +37,74 @@ public class PathFinder {
         return path;
     }
 
-    private static boolean validNeighbor(Node n, TiledMapTileLayer collisionLayer, int mapWidth, int mapHeight) {
+    private static boolean validNeighbor(GridPoint2 n, TiledMapTileLayer collisionLayer, int mapWidth, int mapHeight) {
         return (MathUtils.clamp(n.x, 0, mapWidth-1)  == n.x &&
                 MathUtils.clamp(n.y, 0, mapHeight-1) == n.y &&
                 collisionLayer.getCell(n.x, n.y)   == null);
     }
 
-    private static ArrayList<Node> getNeighbors(Node n) {
+    private static ArrayList<GridPoint2> getNeighbors(GridPoint2 n) {
         TiledMapTileLayer collisionLayer = getCollisionLayer();
 
         MapProperties prop = map.getProperties();
         int mapWidth = prop.get("width", Integer.class);
         int mapHeight = prop.get("height", Integer.class);
 
-        ArrayList<Node> neighbors = new ArrayList<Node>(); 
-        ArrayList<Node> unchecked = new ArrayList<Node>();
+        ArrayList<GridPoint2> neighbors = new ArrayList<GridPoint2>();
+        ArrayList<GridPoint2> unchecked = new ArrayList<GridPoint2>();
 
-        unchecked.add(new Node(n.x-1, n.y-1));
-        unchecked.add(new Node(n.x, n.y-1));
-        unchecked.add(new Node(n.x+1, n.y-1));
-        unchecked.add(new Node(n.x+1, n.y));
-        unchecked.add(new Node(n.x+1, n.y+1));
-        unchecked.add(new Node(n.x, n.y+1));
-        unchecked.add(new Node(n.x-1, n.y+1));
-        unchecked.add(new Node(n.x-1, n.y));
-        for (Node u : unchecked) {
+        unchecked.add(new GridPoint2(n.x-1, n.y-1));
+        unchecked.add(new GridPoint2(n.x, n.y-1));
+        unchecked.add(new GridPoint2(n.x+1, n.y-1));
+        unchecked.add(new GridPoint2(n.x+1, n.y));
+        unchecked.add(new GridPoint2(n.x+1, n.y+1));
+        unchecked.add(new GridPoint2(n.x, n.y+1));
+        unchecked.add(new GridPoint2(n.x-1, n.y+1));
+        unchecked.add(new GridPoint2(n.x-1, n.y));
+        for (GridPoint2 u : unchecked) {
             if (validNeighbor(u, collisionLayer, mapWidth, mapHeight))
                 neighbors.add(u);
         }
         return neighbors;
     }
 
-    public static ArrayList<Node> aStarSearch(int startX, int startY, int goalX, int goalY) {
+    public static ArrayList<GridPoint2> aStarSearch(int startX, int startY, int goalX, int goalY) {
         TiledMapTileLayer collisionLayer = getCollisionLayer();
 
-        Node start = new Node(startX, startY);
-        Node goal  = new Node(goalX, goalY);
+        GridPoint2 start = new GridPoint2(startX, startY);
+        GridPoint2 goal  = new GridPoint2(goalX, goalY);
 
-        ArrayList<Node> closedSet = new ArrayList<Node>();
-        ArrayList<Node> openSet   = new ArrayList<Node>();
+        ArrayList<GridPoint2> closedSet = new ArrayList<GridPoint2>();
+        ArrayList<GridPoint2> openSet   = new ArrayList<GridPoint2>();
         openSet.add(start);
 
-        Hashtable<Node, Node> cameFrom = new Hashtable<Node, Node>();
-        Hashtable<Node, Double> gScore = new Hashtable<Node, Double>() {
+        Hashtable<GridPoint2, GridPoint2> cameFrom = new Hashtable<GridPoint2, GridPoint2>();
+        Hashtable<GridPoint2, Double> gScore = new Hashtable<GridPoint2, Double>() {
             @Override public Double get(Object o) {
                 if (containsKey(o))
                     return super.get(o);
                 return Double.POSITIVE_INFINITY;
             }
         };
-        Hashtable<Node, Double> fScore = new Hashtable<Node, Double>() {
+        Hashtable<GridPoint2, Double> fScore = new Hashtable<GridPoint2, Double>() {
             @Override public Double get(Object o) {
                 if (containsKey(o))
                     return super.get(o);
                 return Double.POSITIVE_INFINITY;
             }
         };
-        
+
         gScore.put(start, 0D);
         fScore.put(start, heuristicCost(start, goal));
 
         while (!openSet.isEmpty()) {
-            Node current  = null;
+            GridPoint2 current  = null;
             double cScore = Double.POSITIVE_INFINITY;
-            /* Get the node with the lowest fscore value */
-            for (Node node : openSet) {
-                if (fScore.get(node) < cScore) {
-                    current = node;
-                    cScore = fScore.get(node);
+            /* Get the GridPoint2 with the lowest fscore value */
+            for (GridPoint2 GridPoint2 : openSet) {
+                if (fScore.get(GridPoint2) < cScore) {
+                    current = GridPoint2;
+                    cScore = fScore.get(GridPoint2);
                 }
             }
 
@@ -130,8 +115,8 @@ public class PathFinder {
             openSet.remove(current);
             closedSet.add(current);
 
-            for (Node neighbor : getNeighbors(current)) {
-                if (closedSet.contains(neighbor)) 
+            for (GridPoint2 neighbor : getNeighbors(current)) {
+                if (closedSet.contains(neighbor))
                     continue;
                 if (!openSet.contains(neighbor))
                     openSet.add(neighbor);
@@ -145,6 +130,6 @@ public class PathFinder {
                 fScore.put(neighbor, gScore.get(neighbor) + heuristicCost(neighbor, goal));
             }
         }
-        return new ArrayList<Node>();
+        return new ArrayList<GridPoint2>();
     }
 }
