@@ -14,11 +14,11 @@ public class GOFactory {
     public static AnimatedObject makePlayer(int col, int row) {
         Texture ss = new Texture("sprites/skeleton_0.png");
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        int width  = 128;
-        int height = 128;
-        int startX = 1024;
-        int startY = 768;
-        for (int i = 0; i < 4; i++)
+        int width  = 64;
+        int height = 64;
+        int startX = 256;
+        int startY = 384;
+        for (int i = 0; i < 8; i++)
             frames.add(new TextureRegion(ss, startX+i*width, startY, width, height));
         Animation<TextureRegion> anim = new Animation<TextureRegion>(0.1f, frames, PlayMode.LOOP);
         

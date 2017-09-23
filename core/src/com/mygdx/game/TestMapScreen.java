@@ -81,9 +81,9 @@ public class TestMapScreen extends MyScreen {
     public void render(float alpha) {
         this.mapRenderer.render();
         this.game.batch.begin();
-        this.player.render(this.game.batch, alpha);
         this.marker.render(this.game.batch, alpha);
         for (GameObject go : pathMarkers) go.render(this.game.batch, alpha);
+        this.player.render(this.game.batch, alpha);
         assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
         assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
         assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
