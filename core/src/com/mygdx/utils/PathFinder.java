@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class PathFinder {
-
+    private static final int D = 1;
+    private static final double D2 = Math.sqrt(2);
     private static TiledMap map = null;
 
     private PathFinder() {}
@@ -24,7 +25,9 @@ public class PathFinder {
     }
 
     private static double heuristicCost(GridPoint2 s, GridPoint2 g) {
-        return Math.sqrt((s.x - g.x)*(s.x - g.x) + (s.y - g.y)*(s.y - g.y));
+        int dx = Math.abs(s.x - g.x);
+        int dy = Math.abs(s.y - g.y);
+        return D * (dx+dy) + (D2 - 2*D) * Math.min(dx, dy);
     }
 
     private static ArrayList<GridPoint2> reconstructPath(Hashtable<GridPoint2, GridPoint2> cameFrom, GridPoint2 current) {

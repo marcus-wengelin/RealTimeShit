@@ -1,39 +1,41 @@
 package com.mygdx.entity;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.utils.Constants;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
-import com.mygdx.utils.Mathy;
+import com.mygdx.utils.IsoMath;
 
 public class GameObject {
 
-    private Vector2 position;
-    private Texture tex;
+    protected Vector2 position;
+    protected TextureRegion tr;
 
     public GameObject(Texture tex, GridPoint2 origin) {
-        this.tex      = tex;
-        this.position = Mathy.cellToVector(origin);
+        this(new TextureRegion(tex), origin);
+    }
+
+    public GameObject(TextureRegion tr, GridPoint2 origin) {
+        this.tr       = tr;
+        this.position = IsoMath.gridToWorld(origin);
     }
 
     public GridPoint2 getCell() {
-        return Mathy.vectorToCell(this.position);
+        return IsoMath.worldToGrid(this.position);
     }
 
     public void setCell(GridPoint2 cell) {
-        this.position = Mathy.cellToVector(cell);
+        this.position = IsoMath.gridToWorld(cell);
     }
 
     public void update(float dt) {}
 
     public void render(SpriteBatch batch, float alpha) {
-        //@TODO: investigate why the commented line doesn't work
-        GridPoint2 cell    = this.getCell();
-        Vector2    drawPos = Mathy.cellToIso(Mathy.vectorToCell(this.position));
-        //Vector2    drawPos = Mathy.worldToIso(this.position);
-        batch.draw(this.tex, drawPos.x, drawPos.y);
+        Vector2    drawPos = IsoMath.worldToScreen(this.position);
+        batch.draw(this.tr, drawPos.x, drawPos.y);
     }
 
 }

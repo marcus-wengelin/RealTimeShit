@@ -10,14 +10,12 @@ import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader.Parameters;
-
-import com.mygdx.utils.TextRenderer;
-import com.mygdx.utils.PathFinder;
-import com.mygdx.utils.TextRenderer.Alignment;
-import com.mygdx.entity.GameObject;
 import com.badlogic.gdx.math.GridPoint2;
-import com.mygdx.utils.Constants;
 import com.badlogic.gdx.math.Vector2;
+
+import com.mygdx.utils.*;
+import com.mygdx.utils.TextRenderer.Alignment;
+import com.mygdx.entity.*;
 
 import java.util.ArrayList;
 
@@ -27,7 +25,7 @@ public class TestMapScreen extends MyScreen {
     private IsometricTiledMapRenderer mapRenderer;
     private OrthographicCamera        camera;
     private InputHandler              input;
-	private GameObject                player;
+	private AnimatedObject            player;
     private GameObject                marker;
     private ArrayList<GameObject>     pathMarkers;
 
@@ -39,7 +37,8 @@ public class TestMapScreen extends MyScreen {
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
         this.input = new InputHandler();
-        this.player = new GameObject(new Texture("sprites/jack.png"), new GridPoint2(0,0));
+        // this.player = new GameObject(new Texture("sprites/jack.png"), new GridPoint2(0,0));
+        this.player = GOFactory.makePlayer(0, 0);
         this.marker = new GameObject(new Texture("sprites/marker.png"), new GridPoint2(0,0));
         this.pathMarkers = new ArrayList<GameObject>();
         TextRenderer.setCamera(this.camera);
@@ -62,6 +61,8 @@ public class TestMapScreen extends MyScreen {
         this.game.batch.setProjectionMatrix(this.camera.combined);
         this.mapRenderer.setView(this.camera);
 
+        this.player.update(deltaTime);
+
         if ( Gdx.input.isButtonPressed(0) ) {
             Vector3 worldCoordinates = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             marker.setCell(new GridPoint2(
@@ -70,7 +71,8 @@ public class TestMapScreen extends MyScreen {
             ));
             ArrayList<GridPoint2> pathCells = PathFinder.aStarSearch(player.getCell(), marker.getCell());
             pathMarkers.clear();
-            for (GridPoint2 n : pathCells) pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), new GridPoint2(n.x, n.y)));
+            for (GridPoint2 n : pathCells) 
+                pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), new GridPoint2(n.x, n.y)));
         }
 
         this.input.resetInputs();
