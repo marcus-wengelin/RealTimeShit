@@ -26,6 +26,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
     /* Called when the Application is first created. */
     @Override public void create() {
+        Gdx.app.setLogLevel(Constants.LOG_LEVEL);
         Gdx.app.log("MyGdxGame", "creating game");
 
         this.batch  = new SpriteBatch();

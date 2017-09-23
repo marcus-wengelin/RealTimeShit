@@ -39,7 +39,7 @@ public class TestMapScreen extends MyScreen {
         this.player = new GameObject(new Texture("sprites/jack.png"), 0, 0);
         this.marker = new GameObject(new Texture("sprites/marker.png"), 1, 14);
         this.pathMarkers = new ArrayList<GameObject>();
-
+        TextRenderer.setCamera(this.camera);
         PathFinder.setMap(this.map);
     }
 
@@ -79,7 +79,6 @@ public class TestMapScreen extends MyScreen {
         this.mapRenderer.render();
         SpriteBatch batch = (SpriteBatch) this.mapRenderer.getBatch();
         batch.begin();
-        // TextRenderer.draw("fipps_modified", "abcdefghijklmnopqrstuvwxyz", 0, 0, Alignment.TOP_RIGHT);
         this.player.render(batch);
         this.marker.render(batch);
         for (GameObject go : pathMarkers)

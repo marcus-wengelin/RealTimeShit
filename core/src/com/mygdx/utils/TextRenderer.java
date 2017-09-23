@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 
 public class TextRenderer {
 
@@ -21,6 +23,7 @@ public class TextRenderer {
     private static SpriteBatch                   batch;
     private static Hashtable<String, BitmapFont> fonts;
     private static GlyphLayout                   layout;
+    private static OrthographicCamera            camera;
 
     private TextRenderer() {}
 
@@ -36,25 +39,37 @@ public class TextRenderer {
         TextRenderer.batch = batch;
     }
 
-    public static void loadFonts(String path) {
+    public static void setCamera(OrthographicCamera camera) {
         assert initted;
-        StringBuilder fontNames = new StringBuilder();
-        for (FileHandle f : Gdx.files.internal(path).list()) {
-            if (!f.extension().toLowerCase().equals("fnt")) continue;
-
-            String name = f.nameWithoutExtension().toLowerCase();
-            fonts.put(name, new BitmapFont(f));
-            fontNames.append(" \"").append(name).append("\",");
-        }
-        Gdx.app.log("TextRenderer", "loaded font(s)"+fontNames.toString());
+        TextRenderer.camera = camera;
     }
 
-    public static BitmapFont get(String fontName) {
+    public static void loadFonts(String path) {
+        assert initted;
+        for (FileHandle f : Gdx.files.internal(path).list()) {
+            if (!f.extension().toLowerCase().equals("fnt")) continue;
+            fonts.put(f.nameWithoutExtension().toLowerCase(), new BitmapFont(f));
+        }
+        Gdx.app.log("TextRenderer", "loaded "+fonts.size()+" font(s)");
+    }
+
+    public static BitmapFont getFont(String fontName) {
         assert initted;
         return fonts.get(fontName);
     }
 
-    public static boolean draw(String fontName, String text, float x, float y, Alignment alignment) {
+    // @TODO: parameter names x and y are bad
+    public static boolean drawOnScreen(String fontName, String text, float x, float y, Alignment alignment) {
+        Vector3 pixelCoords = new Vector3(
+            x     * Gdx.graphics.getWidth(),
+            (1-y) * Gdx.graphics.getHeight(), // flip Y axis
+            0
+        );
+        Vector3 worldCoords = camera.unproject(pixelCoords);
+        return drawOnWorld(fontName, text, worldCoords.x, worldCoords.y, alignment);
+    }
+
+    public static boolean drawOnWorld(String fontName, String text, float x, float y, Alignment alignment) {
         assert initted;
         BitmapFont font = fonts.get(fontName);
         if (font == null) return false;
