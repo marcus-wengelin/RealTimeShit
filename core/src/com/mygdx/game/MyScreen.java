@@ -8,8 +8,8 @@ abstract public class MyScreen {
         this.game = game;
     }
 
-    public abstract void update(float dt);
-    public abstract void render(float a);
+    public abstract void update(float deltaTime);
+    public abstract void render(float alpha);
     public abstract void pause();
     public abstract void resume();
     public abstract void dispose();

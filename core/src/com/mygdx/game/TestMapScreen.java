@@ -15,6 +15,8 @@ import com.mygdx.utils.TextRenderer;
 import com.mygdx.utils.PathFinder;
 import com.mygdx.utils.PathFinder.Node;
 import com.mygdx.utils.TextRenderer.Alignment;
+import com.mygdx.entity.GameObject;
+import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.ArrayList;
 
@@ -36,14 +38,14 @@ public class TestMapScreen extends MyScreen {
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
         this.input = new InputHandler();
-        this.player = new GameObject(new Texture("sprites/jack.png"), 0, 0);
-        this.marker = new GameObject(new Texture("sprites/marker.png"), 1, 14);
+        this.player = new GameObject(new Texture("sprites/jack.png"), new GridPoint2(0,0));
+        this.marker = new GameObject(new Texture("sprites/marker.png"), new GridPoint2(0,0));
         this.pathMarkers = new ArrayList<GameObject>();
         TextRenderer.setCamera(this.camera);
         PathFinder.setMap(this.map);
     }
 
-    public void update(float dt) {
+    public void update(float deltaTime) {
         float dx       = 0;
         float dy       = 0;
         float camSpeed = 5;
@@ -61,23 +63,22 @@ public class TestMapScreen extends MyScreen {
 
         if ( Gdx.input.isButtonPressed(0) ) {
             Vector3 worldCoordinates = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            marker.yTile = (int)((worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - .5);
-            marker.xTile = (int)((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + .5);
-            ArrayList<Node> pathNodes = PathFinder.aStarSearch(player.xTile, player.yTile, marker.xTile, marker.yTile);
+            marker.cell.x = (int)((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + .5);
+            marker.cell.y = (int)((worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - .5);
+            ArrayList<Node> pathNodes = PathFinder.aStarSearch(player.cell.x, player.cell.y, marker.cell.x, marker.cell.y);
             pathMarkers.clear();
-            for (Node n : pathNodes)
-                pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), n.x, n.y));
+            for (Node n : pathNodes) pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), new GridPoint2(n.x, n.y)));
         }
 
         this.input.resetInputs();
     }
 
-    public void render(float a) {
+    public void render(float alpha) {
         this.mapRenderer.render();
         this.game.batch.begin();
-        this.player.render(this.game.batch);
-        this.marker.render(this.game.batch);
-        for (GameObject go : pathMarkers) go.render(this.game.batch);
+        this.player.render(this.game.batch, alpha);
+        this.marker.render(this.game.batch, alpha);
+        for (GameObject go : pathMarkers) go.render(this.game.batch, alpha);
         assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
         assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
         assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
