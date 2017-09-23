@@ -68,11 +68,8 @@ public class PathFinder {
         return neighbors;
     }
 
-    public static ArrayList<GridPoint2> aStarSearch(int startX, int startY, int goalX, int goalY) {
+    public static ArrayList<GridPoint2> aStarSearch(GridPoint2 start, GridPoint2 goal) {
         TiledMapTileLayer collisionLayer = getCollisionLayer();
-
-        GridPoint2 start = new GridPoint2(startX, startY);
-        GridPoint2 goal  = new GridPoint2(goalX, goalY);
 
         ArrayList<GridPoint2> closedSet = new ArrayList<GridPoint2>();
         ArrayList<GridPoint2> openSet   = new ArrayList<GridPoint2>();

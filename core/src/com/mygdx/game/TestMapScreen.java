@@ -16,6 +16,8 @@ import com.mygdx.utils.PathFinder;
 import com.mygdx.utils.TextRenderer.Alignment;
 import com.mygdx.entity.GameObject;
 import com.badlogic.gdx.math.GridPoint2;
+import com.mygdx.utils.Constants;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
@@ -62,11 +64,13 @@ public class TestMapScreen extends MyScreen {
 
         if ( Gdx.input.isButtonPressed(0) ) {
             Vector3 worldCoordinates = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            marker.cell.x = (int)((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + .5);
-            marker.cell.y = (int)((worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - .5);
-            ArrayList<GridPoint2> pathGridPoint2s = PathFinder.aStarSearch(player.cell.x, player.cell.y, marker.cell.x, marker.cell.y);
+            marker.setCell(new GridPoint2(
+                (int) ((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + 0.5f),
+                (int) (( worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - 0.5f)
+            ));
+            ArrayList<GridPoint2> pathCells = PathFinder.aStarSearch(player.getCell(), marker.getCell());
             pathMarkers.clear();
-            for (GridPoint2 n : pathGridPoint2s) pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), new GridPoint2(n.x, n.y)));
+            for (GridPoint2 n : pathCells) pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), new GridPoint2(n.x, n.y)));
         }
 
         this.input.resetInputs();
