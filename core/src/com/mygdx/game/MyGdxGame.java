@@ -62,9 +62,7 @@ public class MyGdxGame extends ApplicationAdapter {
         if (this.frameLimiterTimer >= this.timeBetweenFrames) {
             Gdx.gl.glClearColor(1, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            this.batch.begin();
             this.screen.render(this.accumulator/this.timeBetweenUpdates);
-            this.batch.end();
             this.frameCountLastSecond++;
             this.frameLimiterTimer -= this.timeBetweenFrames;
         }

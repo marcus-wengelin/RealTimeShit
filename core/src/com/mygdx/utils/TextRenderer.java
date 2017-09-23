@@ -60,6 +60,8 @@ public class TextRenderer {
 
     // @TODO: parameter names x and y are bad
     public static boolean drawOnScreen(String fontName, String text, float x, float y, Alignment alignment) {
+        assert initted;
+        if (x < 0 || x > 1 || y < 0 || y > 1) return false;
         Vector3 pixelCoords = new Vector3(
             x     * Gdx.graphics.getWidth(),
             (1-y) * Gdx.graphics.getHeight(), // flip Y axis

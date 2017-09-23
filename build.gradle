@@ -19,10 +19,11 @@ dependencies {
 }
 
 def genericTask = {
-    classpath       = sourceSets.main.runtimeClasspath
-    standardInput   = System.in
-    workingDir      = assetsDir
-    ignoreExitValue = true
+    classpath        = sourceSets.main.runtimeClasspath
+    standardInput    = System.in
+    workingDir       = assetsDir
+    ignoreExitValue  = true
+    enableAssertions = true
     gradle.startParameter.logLevel = org.gradle.api.logging.LogLevel.QUIET
 }
 

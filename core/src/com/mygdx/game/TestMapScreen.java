@@ -56,12 +56,9 @@ public class TestMapScreen extends MyScreen {
         this.camera.translate(dx, dy);
         this.camera.zoom += this.input.scroll()*0.2f;
         this.camera.update();
+        this.game.batch.setProjectionMatrix(this.camera.combined);
         this.mapRenderer.setView(this.camera);
 
-        /*
-        map.x = (screen.x/tileWidthHalf + screen.y/tileHeightHalf) / 2
-        map.y = (screen.y/tileHeightHalf - screen.x/tileWidthHalf) / 2
-        */
         if ( Gdx.input.isButtonPressed(0) ) {
             Vector3 worldCoordinates = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             marker.yTile = (int)((worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - .5);
@@ -77,13 +74,15 @@ public class TestMapScreen extends MyScreen {
 
     public void render(float a) {
         this.mapRenderer.render();
-        SpriteBatch batch = (SpriteBatch) this.mapRenderer.getBatch();
-        batch.begin();
-        this.player.render(batch);
-        this.marker.render(batch);
-        for (GameObject go : pathMarkers)
-            go.render(batch);
-        batch.end();
+        this.game.batch.begin();
+        this.player.render(this.game.batch);
+        this.marker.render(this.game.batch);
+        for (GameObject go : pathMarkers) go.render(this.game.batch);
+        assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
+        assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
+        assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
+        assert TextRenderer.drawOnScreen("fipps_modified", "*", 1, 0, Alignment.TOP_LEFT);
+        this.game.batch.end();
     }
 
     public void pause() {}
