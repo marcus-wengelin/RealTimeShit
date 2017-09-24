@@ -47,6 +47,7 @@ public class MovableGo extends AnimatedGo {
         return this.path;
     }
 
+    //@TODO: cleanup
     @Override public void update(float dt) {
         if (!this.path.isEmpty()) {
 
@@ -68,20 +69,20 @@ public class MovableGo extends AnimatedGo {
                 this.position.y = moveTowards(this.position.y, target.y, this.speed*dt);
             }
             if (this.position.equals(target)) {
-                Gdx.app.debug("MovableGo", ""+(System.currentTimeMillis()-timeBefore));
+                //Gdx.app.debug("MovableGo", ""+(System.currentTimeMillis()-timeBefore));
                 this.timeBefore = System.currentTimeMillis();
                 this.path.remove(0);
             }
 
-            float dx = this.previousPosition.x - this.position.x;
-            float dy = this.previousPosition.y - this.position.y;
-            if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx < 0) this.currentState = GoState.MOVING_E;
-                else        this.currentState = GoState.MOVING_W;
-            } else {
-                if (dy < 0) this.currentState = GoState.MOVING_N;
-                else        this.currentState = GoState.MOVING_S;
-            }
+            //@TODO: the animation states are incorrect sometimes because
+            // moveVert and moveHoriz lie!!!
+            if (moveVert) {
+                this.currentState = IsoMath.isSouthOf(target, this.position) ?
+                                    GoState.MOVING_N : GoState.MOVING_S;
+            } else if (moveHoriz) {
+                this.currentState = IsoMath.isWestOf(target, this.position) ?
+                                    GoState.MOVING_E : GoState.MOVING_W;
+            } else {} // don't change state because we haven't moved
         }
         super.update(dt);
         this.previousPosition = this.position.cpy();
