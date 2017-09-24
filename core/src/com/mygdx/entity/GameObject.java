@@ -23,7 +23,6 @@ public class GameObject {
     }
 
     public GameObject(TextureRegion tr, GridPoint2 origin, ArrayList<GoState> allowedStates, GoState startingState) {
-        /* @TODO: Maybe take startState in args instead */
         assert !allowedStates.isEmpty();
         this.currentState  = startingState;
         this.tr            = tr;

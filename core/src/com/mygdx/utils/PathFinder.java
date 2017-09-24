@@ -30,12 +30,13 @@ public class PathFinder {
         return D * (dx+dy) + (D2 - 2*D) * Math.min(dx, dy);
     }
 
-    private static ArrayList<GridPoint2> reconstructPath(Hashtable<GridPoint2, GridPoint2> cameFrom, GridPoint2 current) {
+    private static ArrayList<GridPoint2> reconstructPath(Hashtable<GridPoint2, GridPoint2> cameFrom,
+                                                         GridPoint2 current) {
         ArrayList<GridPoint2> path = new ArrayList<GridPoint2>();
-        path.add(current);
+        path.add(0, current);
         while (cameFrom.containsKey(current)) {
             current = cameFrom.get(current);
-            path.add(current);
+            path.add(0, current);
         }
         return path;
     }

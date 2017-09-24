@@ -20,7 +20,7 @@ public class GoFactory {
         return new Animation<TextureRegion>(0.1f, frames, PlayMode.LOOP);
     }
 
-    public static AnimatedGo makePlayer(int col, int row) {
+    public static MovableGo makePlayer(int col, int row) {
         Texture ss = new Texture("sprites/skeleton_0.png");
         Array<TextureRegion> frames = new Array<TextureRegion>();
         int width  = 64;
@@ -31,7 +31,7 @@ public class GoFactory {
         Hashtable<GoState, Animation<TextureRegion>> animTable =
             new Hashtable<GoState, Animation<TextureRegion>>();
 
-        animTable.put(GoState.MOVING_W, loadAnim(ss, startX, 0, width, height, size));
+        animTable.put(GoState.MOVING_W, loadAnim(ss, startX, 0,   width, height, size));
         animTable.put(GoState.MOVING_N, loadAnim(ss, startX, 128, width, height, size));
         animTable.put(GoState.MOVING_E, loadAnim(ss, startX, 256, width, height, size));
         animTable.put(GoState.MOVING_S, loadAnim(ss, startX, 384, width, height, size));
@@ -40,13 +40,13 @@ public class GoFactory {
         allowedStates.add(GoState.MOVING_W);
         allowedStates.add(GoState.MOVING_N);
         allowedStates.add(GoState.MOVING_S);
-        
-        return new AnimatedGo(new GridPoint2(col, row), animTable, allowedStates, GoState.MOVING_W);
+
+        return new MovableGo(new GridPoint2(col, row), animTable, allowedStates, GoState.MOVING_E, 1f);
     }
 
     public static GameObject makeMarker(int col, int row) {
         Texture tx = new Texture("sprites/marker.png");
-        ArrayList<GoState> allowedStates = new ArrayList<GoState>(); 
+        ArrayList<GoState> allowedStates = new ArrayList<GoState>();
         allowedStates.add(GoState.IDLE);
         return new GameObject(tx, new GridPoint2(col, row), allowedStates, GoState.IDLE);
     }

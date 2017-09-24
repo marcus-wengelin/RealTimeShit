@@ -9,7 +9,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader.Parameters;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 
@@ -25,14 +24,13 @@ public class TestMapScreen extends MyScreen {
     private IsometricTiledMapRenderer mapRenderer;
     private OrthographicCamera        camera;
     private InputHandler              input;
-	private AnimatedGo                player;
+	private MovableGo                 player;
     private GameObject                marker;
     private ArrayList<GameObject>     pathMarkers;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
-        Parameters params = new Parameters();
-        this.map         = new TmxMapLoader().load("maps/test/test.tmx", params);
+        this.map         = new TmxMapLoader().load("maps/test/test.tmx");
         this.mapRenderer = new IsometricTiledMapRenderer(this.map);
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
@@ -68,10 +66,9 @@ public class TestMapScreen extends MyScreen {
                 (int) ((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + 0.5f),
                 (int) (( worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - 0.5f)
             ));
-            ArrayList<GridPoint2> pathCells = PathFinder.aStarSearch(player.getCell(), marker.getCell());
+            ArrayList<GridPoint2> pathCells = this.player.moveTo(marker.getCell());
             pathMarkers.clear();
-            for (GridPoint2 n : pathCells) 
-                pathMarkers.add(GoFactory.makeMarker(n.x, n.y));
+            for (GridPoint2 n : pathCells) pathMarkers.add(GoFactory.makeMarker(n.x, n.y));
         }
 
         this.input.resetInputs();

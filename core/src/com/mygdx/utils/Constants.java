@@ -11,7 +11,7 @@ public class Constants {
 	public static final int     WINDOW_HEIGHT    = 480;
 	public static final boolean WINDOW_RESIZABLE = true;
 	public static final boolean ENABLE_VSYNC     = false;
-	public static final int     LOG_LEVEL = Logger.DEBUG; // DEBUG, ERROR, INFO, NONE
+	public static final int     LOG_LEVEL        = Logger.DEBUG; // DEBUG, ERROR, INFO, NONE
 
 	public static final int   UPDATES_PER_SECOND       = 60;
 	public static final int   MAX_FRAMES_PER_SECOND    = 300;
