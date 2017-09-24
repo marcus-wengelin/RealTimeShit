@@ -10,48 +10,69 @@ public class IsoMath {
     private IsoMath() {}
 
     /**
-     * Returns true if goal is north of origin, else false
-     * @param GridPoint2    origin
-     * @param GridPoint2    goal
-     * @return boolean      goal is north of origin
-     *
+     * Returns true if goal is north of origin
      */
     public static boolean isNorthOf(GridPoint2 origin, GridPoint2 goal) {
         return goal.y > origin.y;
     }
+    public static boolean isNorthOf(Vector2 origin, Vector2 goal) {
+        return goal.y > origin.y;
+    }
+    public static boolean isNorthOf(GridPoint2 origin, Vector2 goal) {
+        return goal.y > gridToWorld(origin).y;
+    }
+    public static boolean isNorthOf(Vector2 origin, GridPoint2 goal) {
+        return gridToWorld(goal).y > origin.y;
+    }
  
     /**
-     * Returns true if goal is south of origin, else false
-     * @param GridPoint2    origin
-     * @param GridPoint2    goal
-     * @return boolean      goal is south of origin
-     *
+     * Returns true if goal is south of origin
      */
     public static boolean isSouthOf(GridPoint2 origin, GridPoint2 goal) {
         return goal.y < origin.y;
     }
+    public static boolean isSouthOf(Vector2 origin, Vector2 goal) {
+        return goal.y < origin.y;
+    }
+    public static boolean isSouthOf(GridPoint2 origin, Vector2 goal) {
+        return goal.y < gridToWorld(origin).y;
+    }
+    public static boolean isSouthOf(Vector2 origin, GridPoint2 goal) {
+        return gridToWorld(goal).y < origin.y;
+    }
 
     /**
-     * Returns true if goal is east of origin, else false
-     * @param GridPoint2    origin
-     * @param GridPoint2    goal
-     * @return boolean      goal is east of origin
-     *
+     * Returns true if goal is east of origin
      */
     public static boolean isEastOf(GridPoint2 origin, GridPoint2 goal) {
         return goal.x > origin.x;
     }
+    public static boolean isEastOf(Vector2 origin, Vector2 goal) {
+        return goal.x > origin.x;
+    }
+    public static boolean isEastOf(GridPoint2 origin, Vector2 goal) {
+        return goal.x > gridToWorld(origin).x;
+    }
+    public static boolean isEastOf(Vector2 origin, GridPoint2 goal) {
+        return gridToWorld(goal).x > origin.x;
+    }
 
     /**
-     * Returns true if goal is west of origin, else false
-     * @param GridPoint2    origin
-     * @param GridPoint2    goal
-     * @return boolean      goal is east of origin
-     *
+     * Returns true if goal is west of origin
      */
     public static boolean isWestOf(GridPoint2 origin, GridPoint2 goal) {
         return goal.x < origin.x;
     }
+    public static boolean isWestOf(Vector2 origin, Vector2 goal) {
+        return goal.x < origin.x;
+    }
+    public static boolean isWestOf(GridPoint2 origin, Vector2 goal) {
+        return goal.x < gridToWorld(origin).x;
+    }
+    public static boolean isWestOf(Vector2 origin, GridPoint2 goal) {
+        return gridToWorld(goal).x < origin.x;
+    }
+    
 
     /**
      * Converts grid coordinates to world coordinates
