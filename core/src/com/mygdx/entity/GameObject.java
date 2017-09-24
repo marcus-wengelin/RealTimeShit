@@ -3,24 +3,32 @@ package com.mygdx.entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.utils.Constants;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import java.util.ArrayList;
+
 import com.mygdx.utils.IsoMath;
+import com.mygdx.utils.Constants;
+
+import java.util.ArrayList;
 
 public class GameObject {
+    public GoState currentState;
 
+    protected ArrayList<GoState> allowedStates;
     protected Vector2 position;
     protected TextureRegion tr;
 
-    public GameObject(Texture tex, GridPoint2 origin) {
-        this(new TextureRegion(tex), origin);
+    public GameObject(Texture tex, GridPoint2 origin, ArrayList<GoState> allowedStates, GoState startingState) {
+        this(new TextureRegion(tex), origin, allowedStates, startingState);
     }
 
-    public GameObject(TextureRegion tr, GridPoint2 origin) {
-        this.tr       = tr;
-        this.position = IsoMath.gridToWorld(origin);
+    public GameObject(TextureRegion tr, GridPoint2 origin, ArrayList<GoState> allowedStates, GoState startingState) {
+        /* @TODO: Maybe take startState in args instead */
+        assert !allowedStates.isEmpty();
+        this.currentState  = startingState;
+        this.tr            = tr;
+        this.position      = IsoMath.gridToWorld(origin);
+        this.allowedStates = allowedStates;
     }
 
     public GridPoint2 getCell() {

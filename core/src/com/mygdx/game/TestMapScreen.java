@@ -25,7 +25,7 @@ public class TestMapScreen extends MyScreen {
     private IsometricTiledMapRenderer mapRenderer;
     private OrthographicCamera        camera;
     private InputHandler              input;
-	private AnimatedObject            player;
+	private AnimatedGo                player;
     private GameObject                marker;
     private ArrayList<GameObject>     pathMarkers;
 
@@ -37,9 +37,8 @@ public class TestMapScreen extends MyScreen {
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
         this.input = new InputHandler();
-        // this.player = new GameObject(new Texture("sprites/jack.png"), new GridPoint2(0,0));
-        this.player = GOFactory.makePlayer(0, 0);
-        this.marker = new GameObject(new Texture("sprites/marker.png"), new GridPoint2(0,0));
+        this.player = GoFactory.makePlayer(0, 0);
+        this.marker = GoFactory.makeMarker(0, 0);
         this.pathMarkers = new ArrayList<GameObject>();
         TextRenderer.setCamera(this.camera);
         PathFinder.setMap(this.map);
@@ -72,7 +71,7 @@ public class TestMapScreen extends MyScreen {
             ArrayList<GridPoint2> pathCells = PathFinder.aStarSearch(player.getCell(), marker.getCell());
             pathMarkers.clear();
             for (GridPoint2 n : pathCells) 
-                pathMarkers.add(new GameObject(new Texture("sprites/marker.png"), new GridPoint2(n.x, n.y)));
+                pathMarkers.add(GoFactory.makeMarker(n.x, n.y));
         }
 
         this.input.resetInputs();
@@ -86,8 +85,8 @@ public class TestMapScreen extends MyScreen {
         this.player.render(this.game.batch, alpha);
         assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
         assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
-        assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
-        assert TextRenderer.drawOnScreen("fipps_modified", "*", 1, 0, Alignment.TOP_LEFT);
+        //assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
+        //assert TextRenderer.drawOnScreen("fipps_modified", "*", 1, 0, Alignment.TOP_LEFT);
         this.game.batch.end();
     }
 
