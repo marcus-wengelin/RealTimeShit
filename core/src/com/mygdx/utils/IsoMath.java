@@ -5,6 +5,7 @@ import static com.mygdx.utils.Constants.TILE_HEIGHT;
 
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class IsoMath {
     private IsoMath() {}
@@ -24,7 +25,7 @@ public class IsoMath {
     public static boolean isNorthOf(Vector2 origin, GridPoint2 goal) {
         return gridToWorld(goal).y > origin.y;
     }
- 
+
     /**
      * Returns true if goal is south of origin
      */
@@ -72,7 +73,6 @@ public class IsoMath {
     public static boolean isWestOf(Vector2 origin, GridPoint2 goal) {
         return gridToWorld(goal).x < origin.x;
     }
-    
 
     /**
      * Converts grid coordinates to world coordinates
@@ -119,11 +119,18 @@ public class IsoMath {
     * @param Vector2    world coordinates
     * @return Vector2   screen coordinates
     *
-    */ 
+    */
     public static Vector2 worldToScreen(Vector2 position) {
         return new Vector2(
-            (position.x + position.y*TILE_WIDTH/TILE_HEIGHT) / 2f,
-            (position.y - position.x*TILE_HEIGHT/TILE_WIDTH) / 2f
+            (position.x + position.y * TILE_WIDTH/TILE_HEIGHT),
+            (position.y - position.x * TILE_HEIGHT/TILE_WIDTH) / 2f
+        );
+    }
+
+    public static GridPoint2 orthoWorldToIso(Vector3 position) {
+        return new GridPoint2(
+            (int) ((position.x/TILE_WIDTH - position.y/(TILE_HEIGHT/2f)) / 2f + 0.5f),
+            (int) ((position.x/TILE_WIDTH + position.y/(TILE_HEIGHT/2f)) / 2f - 0.5f)
         );
     }
 }

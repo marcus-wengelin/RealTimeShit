@@ -13,51 +13,74 @@ import java.util.ArrayList;
 
 import com.mygdx.utils.PathFinder;
 import com.mygdx.utils.IsoMath;
+import com.mygdx.utils.Constants;
 
 public class MovableGo extends AnimatedGo {
 
     private Vector2               previousPosition;
     private ArrayList<GridPoint2> path;
-    private float                 speed;
-    private float                 timer;
+    private float                 speed; // units per second (a cell is 1x1)
+    private long                  timeBefore;
 
     public MovableGo(GridPoint2 origin, Hashtable<GoState, Animation<TextureRegion>> animTable,
                      ArrayList<GoState> allowedStates, GoState startingState, float speed) {
         super(origin, animTable, allowedStates, startingState);
         this.previousPosition = this.position.cpy();
         this.path             = new ArrayList<GridPoint2>();
-        this.speed            = speed;
-        this.timer            = 0;
+        this.speed            = speed*Constants.TILE_WIDTH;
     }
 
     public ArrayList<GridPoint2> moveTo(GridPoint2 target) {
+        GridPoint2 nearestCell = null;
+        if (!this.path.isEmpty()) nearestCell = this.path.get(0);
+
         this.path = PathFinder.aStarSearch(this.getCell(), target);
-        this.timer = 0;
+
+        if (this.path.isEmpty()) {
+            // if the go was in the middle of a travel, finish it
+            if (nearestCell != null) this.path.add(nearestCell);
+        } else if (this.path.size() > 1) {
+            this.path.remove(0);
+        }
+
+        this.timeBefore = System.currentTimeMillis();
         return this.path;
     }
 
     @Override public void update(float dt) {
-        if (path.size() > 1) {
+        if (!this.path.isEmpty()) {
 
-            Vector2 origin = IsoMath.gridToWorld(path.get(0));
-            Vector2 target = IsoMath.gridToWorld(path.get(1));
-            this.timer += dt*speed*2f; // speed means the amount of units distance per second
-            this.position = origin.interpolate(target, this.timer, Interpolation.linear);
-            if (this.timer >= 1) {
-                path.remove(0);
-                this.position = target.cpy();
-                this.timer = 0;
+            Vector2 target    = IsoMath.gridToWorld(this.path.get(0));
+            boolean moveHoriz = IsoMath.isEastOf(target,  this.position) ||
+                                IsoMath.isWestOf(target,  this.position);
+            boolean moveVert  = IsoMath.isNorthOf(target, this.position) ||
+                                IsoMath.isSouthOf(target, this.position);
+            if (moveHoriz && moveVert) {
+                //Gdx.app.debug("MovableGo", "moving diagonally");
+                float diagSpeed = 1f/(float)Math.sqrt(2);
+                this.position.x = moveTowards(this.position.x, target.x, speed*diagSpeed*dt);
+                this.position.y = moveTowards(this.position.y, target.y, speed*diagSpeed*dt);
+            } else if (moveHoriz) {
+                //Gdx.app.debug("MovableGo", "move horizontally");
+                this.position.x = moveTowards(this.position.x, target.x, this.speed*dt);
+            } else if (moveVert) {
+                //Gdx.app.debug("MovableGo", "move vertically");
+                this.position.y = moveTowards(this.position.y, target.y, this.speed*dt);
+            }
+            if (this.position.equals(target)) {
+                Gdx.app.debug("MovableGo", ""+(System.currentTimeMillis()-timeBefore));
+                this.timeBefore = System.currentTimeMillis();
+                this.path.remove(0);
             }
 
-            float xSpeed = this.previousPosition.x - this.position.x;
-            Gdx.app.debug("MovableGo", ""+xSpeed);
-            float ySpeed = this.previousPosition.y - this.position.y;
-            if (Math.abs(xSpeed) >= Math.abs(ySpeed)) {
-                if (xSpeed < 0) this.currentState = GoState.MOVING_E;
-                else            this.currentState = GoState.MOVING_W;
+            float dx = this.previousPosition.x - this.position.x;
+            float dy = this.previousPosition.y - this.position.y;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx < 0) this.currentState = GoState.MOVING_E;
+                else        this.currentState = GoState.MOVING_W;
             } else {
-                if (ySpeed < 0) this.currentState = GoState.MOVING_N;
-                else            this.currentState = GoState.MOVING_S;
+                if (dy < 0) this.currentState = GoState.MOVING_N;
+                else        this.currentState = GoState.MOVING_S;
             }
         }
         super.update(dt);
@@ -66,6 +89,17 @@ public class MovableGo extends AnimatedGo {
 
     @Override public void render(SpriteBatch batch, float alpha) {
         super.render(batch, alpha); //@TODO: super bad! use linear interpolation
+    }
+
+    private float moveTowards(float origin, float goal, float value) {
+        if (origin > goal) {
+            origin -= value;
+            if (origin < goal) origin = goal;
+        } else {
+            origin += value;
+            if (origin > goal) origin = goal;
+        }
+        return origin;
     }
 
 }

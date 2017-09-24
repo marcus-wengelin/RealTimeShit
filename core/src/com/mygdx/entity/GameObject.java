@@ -41,7 +41,7 @@ public class GameObject {
     public void update(float dt) {}
 
     public void render(SpriteBatch batch, float alpha) {
-        Vector2    drawPos = IsoMath.worldToScreen(this.position);
+        Vector2 drawPos = IsoMath.worldToScreen(this.position);
         batch.draw(this.tr, drawPos.x, drawPos.y);
     }
 

@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class PathFinder {
-    private static final int D = 1;
-    private static final double D2 = Math.sqrt(2);
-    private static TiledMap map = null;
+    private static final int      D   = 1;
+    private static final double   D2  = Math.sqrt(2);
+    private static       TiledMap map = null;
 
     private PathFinder() {}
 
@@ -44,7 +44,7 @@ public class PathFinder {
     private static boolean validNeighbor(GridPoint2 n, TiledMapTileLayer collisionLayer, int mapWidth, int mapHeight) {
         return (MathUtils.clamp(n.x, 0, mapWidth-1)  == n.x &&
                 MathUtils.clamp(n.y, 0, mapHeight-1) == n.y &&
-                collisionLayer.getCell(n.x, n.y)   == null);
+                collisionLayer.getCell(n.x, n.y)     == null);
     }
 
     private static ArrayList<GridPoint2> getNeighbors(GridPoint2 n) {

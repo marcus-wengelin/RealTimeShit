@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import java.util.Hashtable;
 import java.util.ArrayList;
 
+import static com.mygdx.utils.Constants.TILE_WIDTH;
+import static com.mygdx.utils.Constants.TILE_HEIGHT;
+
 public class GoFactory {
 
     private GoFactory() {}
@@ -41,7 +44,7 @@ public class GoFactory {
         allowedStates.add(GoState.MOVING_N);
         allowedStates.add(GoState.MOVING_S);
 
-        return new MovableGo(new GridPoint2(col, row), animTable, allowedStates, GoState.MOVING_E, 1f);
+        return new MovableGo(new GridPoint2(col, row), animTable, allowedStates, GoState.MOVING_E, 4f);
     }
 
     public static GameObject makeMarker(int col, int row) {

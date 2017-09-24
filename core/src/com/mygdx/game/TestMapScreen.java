@@ -60,12 +60,9 @@ public class TestMapScreen extends MyScreen {
 
         this.player.update(deltaTime);
 
-        if ( Gdx.input.isButtonPressed(0) ) {
-            Vector3 worldCoordinates = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            marker.setCell(new GridPoint2(
-                (int) ((-worldCoordinates.y/16f + worldCoordinates.x/32f) / 2f + 0.5f),
-                (int) (( worldCoordinates.x/32f + worldCoordinates.y/16f) / 2f - 0.5f)
-            ));
+        if (Gdx.input.isButtonPressed(0)) {
+            Vector3 worldCoords = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            marker.setCell(IsoMath.orthoWorldToIso(worldCoords));
             ArrayList<GridPoint2> pathCells = this.player.moveTo(marker.getCell());
             pathMarkers.clear();
             for (GridPoint2 n : pathCells) pathMarkers.add(GoFactory.makeMarker(n.x, n.y));

@@ -68,7 +68,7 @@ public class MyGdxGame extends ApplicationAdapter {
         }
 
         if (this.oneSecondTimer >= 1) {
-            Gdx.app.log("MyGdxGame", String.format("%d UPS, %d FPS", this.updateCountLastSecond, this.frameCountLastSecond));
+            // Gdx.app.log("MyGdxGame", String.format("%d UPS, %d FPS", this.updateCountLastSecond, this.frameCountLastSecond));
             this.updateCountLastSecond = 0;
             this.frameCountLastSecond  = 0;
             this.oneSecondTimer        = 0;

@@ -17,7 +17,8 @@ public class Constants {
 	public static final int   MAX_FRAMES_PER_SECOND    = 300;
 	public static final float MAX_TIME_BETWEEN_UPDATES = 0.25f; // in seconds
 
-	public static final int TILE_WIDTH  = 64;
+	//@TODO: cells are square, replace these with TILE_SIZE?
+	public static final int TILE_WIDTH  = 32;
 	public static final int TILE_HEIGHT = 32;
 
 }
