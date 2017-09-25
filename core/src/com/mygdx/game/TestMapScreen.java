@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.maps.MapProperties;
 
 import com.mygdx.utils.*;
 import com.mygdx.utils.TextRenderer.Alignment;
@@ -22,52 +23,49 @@ import java.util.ArrayList;
 
 public class TestMapScreen extends MyScreen {
 
-    private TiledMap                  map;
-    private IsometricTiledMapRenderer mapRenderer;
-    private OrthographicCamera        camera;
+    private GameCamera                gameCamera;
     private InputHandler              input;
 	private MovableGo                 player;
     private GameObject                marker;
     private ArrayList<GameObject>     pathMarkers;
-    private ScalingViewport           viewport;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
-        this.map         = new TmxMapLoader().load("maps/test/test.tmx");
-        this.mapRenderer = new IsometricTiledMapRenderer(this.map);
-        this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        //@TODO: decide scaling mode
-        this.viewport    = new ScalingViewport(Scaling.none, this.camera.viewportWidth, this.camera.viewportHeight, this.camera);
-        this.mapRenderer.setView(this.camera);
-        this.game.batch.setProjectionMatrix(this.camera.combined);
+
+        this.gameCamera = new GameCamera(this.game.batch, "test", Scaling.none);
         this.input = new InputHandler();
         this.player = GoFactory.makePlayer(0, 0);
         this.marker = GoFactory.makeMarker(0, 0);
         this.pathMarkers = new ArrayList<GameObject>();
-        TextRenderer.setCamera(this.camera);
-        PathFinder.setMap(this.map);
+
+        TextRenderer.setCamera(this.gameCamera.camera);
+        PathFinder.setMap(this.gameCamera.map);
     }
 
     @Override public void update(float deltaTime) {
+        /*Gdx.app.debug("TestMapScreen", String.format(
+            "screensize: (%d,%d) %n"+
+            "worldsize: (%f,%f) %n",
+            this.viewport.getScreenWidth(), this.viewport.getScreenHeight(),
+            this.viewport.getWorldWidth(), this.viewport.getWorldHeight())
+        );*/
+
         if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
-            this.camera.translate(-this.input.mouseDrag.x, this.input.mouseDrag.y);
-            Gdx.app.debug("TestMapScreen", "detected mouse drag "+this.input.mouseDrag);
+            this.gameCamera.camera.translate(-this.input.mouseDrag.x, this.input.mouseDrag.y);
         }
 
         //@TODO: scrolling is broken
         if (this.input.scroll != 0) {
             int viewportWidth  = Gdx.graphics.getWidth() +this.input.scroll*10;
             int viewportHeight = Gdx.graphics.getHeight()+this.input.scroll*10;
-            this.viewport.update(viewportWidth, viewportHeight, true);
-            this.viewport.apply();
+            this.gameCamera.resizeViewport(viewportWidth, viewportHeight);
         }
 
-        this.camera.update();
-        this.game.batch.setProjectionMatrix(this.camera.combined);
-        this.mapRenderer.setView(this.camera);
+        this.gameCamera.update();
 
         if (Gdx.input.isButtonPressed(0)) {
-            Vector2 worldCoords = this.viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+            Vector2 worldCoords = this.gameCamera.screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+            //Vector2 worldCoords = this.viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             marker.setCell(IsoMath.orthoWorldToIso(worldCoords));
             ArrayList<GridPoint2> pathCells = this.player.moveTo(marker.getCell());
             pathMarkers.clear();
@@ -79,27 +77,28 @@ public class TestMapScreen extends MyScreen {
     }
 
     @Override public void render(float alpha) {
-        this.mapRenderer.render();
-        this.game.batch.begin();
-        this.marker.render(this.game.batch, alpha);
-        for (GameObject go : pathMarkers) go.render(this.game.batch, alpha);
-        this.player.render(this.game.batch, alpha);
+        this.gameCamera.mapRenderer.render();
+        SpriteBatch batch = this.gameCamera.batch;
+        batch.begin();
+        this.marker.render(batch, alpha);
+        for (GameObject go : pathMarkers) go.render(batch, alpha);
+        this.player.render(batch, alpha);
         assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
         assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
         //assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
         //assert TextRenderer.drawOnScreen("fipps_modified", "*", 1, 0, Alignment.TOP_LEFT);
-        this.game.batch.end();
+        batch.end();
     }
 
     @Override public void pause() {}
     @Override public void resume() {}
 
     @Override public void resize(int width, int height) {
-        this.viewport.update(width, height);
+        this.gameCamera.screenResize(width, height);
     }
 
     @Override public void dispose() {
-        this.map.dispose();
-        this.mapRenderer.dispose();
+        this.gameCamera.dispose();
     }
+
 }
