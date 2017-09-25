@@ -30,6 +30,8 @@ public class PathFinder {
         return D * (dx+dy) + (D2 - 2*D) * Math.min(dx, dy);
     }
 
+    // @TODO: If this seems slow, look into using Collections.reverse
+    // or some other data structure
     private static ArrayList<GridPoint2> reconstructPath(Hashtable<GridPoint2, GridPoint2> cameFrom,
                                                          GridPoint2 current) {
         ArrayList<GridPoint2> path = new ArrayList<GridPoint2>();
