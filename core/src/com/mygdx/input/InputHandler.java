@@ -7,8 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 public class InputHandler {
 
     public int     scroll;
-    public int     mouseX;
-    public int     mouseY;
     public Vector2 mouseDrag;
 
     public InputHandler() {
@@ -25,12 +23,6 @@ public class InputHandler {
     private class MyInputProcessor extends InputAdapter {
         @Override public boolean scrolled(int amount) {
             scroll = amount;
-            return true;
-        }
-
-        @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            mouseX = screenX;
-            mouseY = screenY;
             return true;
         }
 

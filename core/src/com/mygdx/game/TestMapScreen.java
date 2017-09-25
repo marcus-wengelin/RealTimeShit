@@ -44,17 +44,10 @@ public class TestMapScreen extends MyScreen {
     }
 
     @Override public void update(float deltaTime) {
-        if (!this.input.mouseDrag.isZero()) {
+        if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
             this.camera.translate(-this.input.mouseDrag.x*10, this.input.mouseDrag.y*10);
             Gdx.app.debug("TestMapScreen", "detected mouse drag "+this.input.mouseDrag);
         }
-
-/*        if (Gdx.input.isKeyPressed(Keys.W)) dy += camSpeed/2f;
-        if (Gdx.input.isKeyPressed(Keys.A)) dx -= camSpeed;
-        if (Gdx.input.isKeyPressed(Keys.S)) dy -= camSpeed/2f;
-        if (Gdx.input.isKeyPressed(Keys.D)) dx += camSpeed;
-
-        if (dx != 0 || dy != 0)*/
 
         if (this.input.scroll != 0) {
             int viewportWidth  = Gdx.graphics.getWidth() *this.input.scroll;
