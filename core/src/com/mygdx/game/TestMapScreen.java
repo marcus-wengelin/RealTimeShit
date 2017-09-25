@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.Scaling;
 
 import com.mygdx.utils.*;
 import com.mygdx.utils.TextRenderer.Alignment;
@@ -27,12 +29,15 @@ public class TestMapScreen extends MyScreen {
 	private MovableGo                 player;
     private GameObject                marker;
     private ArrayList<GameObject>     pathMarkers;
+    private ScalingViewport           viewport;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
         this.map         = new TmxMapLoader().load("maps/test/test.tmx");
         this.mapRenderer = new IsometricTiledMapRenderer(this.map);
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //@TODO: decide scaling mode
+        this.viewport    = new ScalingViewport(Scaling.none, this.camera.viewportWidth, this.camera.viewportHeight, this.camera);
         this.mapRenderer.setView(this.camera);
         this.game.batch.setProjectionMatrix(this.camera.combined);
         this.input = new InputHandler();
@@ -49,25 +54,27 @@ public class TestMapScreen extends MyScreen {
             Gdx.app.debug("TestMapScreen", "detected mouse drag "+this.input.mouseDrag);
         }
 
+        //@TODO: scrolling is broken
         if (this.input.scroll != 0) {
-            int viewportWidth  = Gdx.graphics.getWidth() *this.input.scroll;
-            int viewportHeight = Gdx.graphics.getHeight()*this.input.scroll;
-            this.camera = new OrthographicCamera(viewportWidth, viewportHeight);
+            int viewportWidth  = Gdx.graphics.getWidth() +this.input.scroll*10;
+            int viewportHeight = Gdx.graphics.getHeight()+this.input.scroll*10;
+            this.viewport.update(viewportWidth, viewportHeight, true);
+            this.viewport.apply();
         }
 
         this.camera.update();
-        this.player.update(deltaTime);
         this.game.batch.setProjectionMatrix(this.camera.combined);
         this.mapRenderer.setView(this.camera);
 
         if (Gdx.input.isButtonPressed(0)) {
-            Vector3 worldCoords = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            Vector2 worldCoords = this.viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             marker.setCell(IsoMath.orthoWorldToIso(worldCoords));
             ArrayList<GridPoint2> pathCells = this.player.moveTo(marker.getCell());
             pathMarkers.clear();
             for (GridPoint2 n : pathCells) pathMarkers.add(GoFactory.makeMarker(n.x, n.y));
         }
 
+        this.player.update(deltaTime);
         this.input.resetInputs();
     }
 
@@ -88,7 +95,7 @@ public class TestMapScreen extends MyScreen {
     @Override public void resume() {}
 
     @Override public void resize(int width, int height) {
-        this.camera = new OrthographicCamera(width, height);
+        this.viewport.update(width, height);
     }
 
     @Override public void dispose() {

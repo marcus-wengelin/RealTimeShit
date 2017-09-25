@@ -5,7 +5,6 @@ import static com.mygdx.utils.Constants.TILE_HEIGHT;
 
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 public class IsoMath {
     private IsoMath() {}
@@ -127,7 +126,7 @@ public class IsoMath {
         );
     }
 
-    public static GridPoint2 orthoWorldToIso(Vector3 position) {
+    public static GridPoint2 orthoWorldToIso(Vector2 position) {
         return new GridPoint2(
             (int) ((position.x/TILE_WIDTH - position.y/(TILE_HEIGHT/2f)) / 2f + 0.5f),
             (int) ((position.x/TILE_WIDTH + position.y/(TILE_HEIGHT/2f)) / 2f - 0.5f)
