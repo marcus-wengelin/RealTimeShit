@@ -20,11 +20,9 @@ public class MoveCommand implements Command {
 
     @Override public boolean execute() {
         if (this.go instanceof MovableGo) {
-            MovableGo mgo = (MovableGo)this.go;
-            mgo.moveTo(dst);
+            ((MovableGo) this.go).moveTo(dst);
             return true;
         }
         return false;
     }
 }
-

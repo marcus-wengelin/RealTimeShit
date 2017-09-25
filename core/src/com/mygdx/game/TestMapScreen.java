@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.math.MathUtils;
 
 import com.mygdx.utils.*;
 import com.mygdx.utils.TextRenderer.Alignment;
@@ -23,11 +24,11 @@ import java.util.ArrayList;
 
 public class TestMapScreen extends MyScreen {
 
-    private GameCamera                gameCamera;
-    private InputHandler              input;
-	private MovableGo                 player;
-    private GameObject                marker;
-    private ArrayList<GameObject>     pathMarkers;
+    private GameCamera            gameCamera;
+    private InputHandler          input;
+	private MovableGo             player;
+    private GameObject            marker;
+    private ArrayList<GameObject> pathMarkers;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
@@ -37,28 +38,34 @@ public class TestMapScreen extends MyScreen {
         this.marker      = GoFactory.makeMarker(0, 0);
         this.pathMarkers = new ArrayList<GameObject>();
 
-        this.gameCamera  = new GameCamera("test", Scaling.none);
+        this.gameCamera  = new GameCamera("test", Scaling.fit);
         TextRenderer.setCamera(this.gameCamera.camera);
         PathFinder.setMap(this.gameCamera.map);
     }
 
     @Override public void update(float deltaTime) {
         if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
-            this.gameCamera.move(new Vector2(-this.input.mouseDrag.x, this.input.mouseDrag.y));
+            this.gameCamera.move(
+                new Vector2(-this.input.mouseDrag.x, this.input.mouseDrag.y)
+                .scl(this.gameCamera.camera.zoom)
+            );
         }
 
-        //@TODO: scrolling is broken
         if (this.input.scroll != 0) {
-            int viewportWidth  = Gdx.graphics.getWidth() +this.input.scroll*10;
-            int viewportHeight = Gdx.graphics.getHeight()+this.input.scroll*10;
-            this.gameCamera.resizeViewport(viewportWidth, viewportHeight);
+            float newZoom = this.gameCamera.camera.zoom;
+            newZoom += this.input.scroll/2.5f;
+            newZoom = MathUtils.clamp(newZoom, 1, 2);
+            this.gameCamera.camera.zoom = newZoom;
         }
         this.gameCamera.update();
         this.game.batch.setProjectionMatrix(this.gameCamera.camera.combined);
 
-        if (Gdx.input.isButtonPressed(0)) {
-            Vector2 worldCoords = this.gameCamera.screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-            marker.setCell(IsoMath.orthoWorldToIso(worldCoords));
+        if (Gdx.input.isButtonPressed(1)) {
+            Vector2 worldCoords = this.gameCamera.screenToWorld(
+                new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+            GridPoint2 cell = IsoMath.orthoWorldToIso(worldCoords);
+            marker.setCell(cell);
+            Gdx.app.debug("TestMapScreen", cell.toString());
             ArrayList<GridPoint2> pathCells = this.player.moveTo(marker.getCell());
             pathMarkers.clear();
             for (GridPoint2 n : pathCells) pathMarkers.add(GoFactory.makeMarker(n.x, n.y));

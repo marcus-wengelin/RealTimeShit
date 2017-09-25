@@ -17,7 +17,7 @@ public class GameCamera {
     public  OrthographicCamera        camera;
 
     private IsometricTiledMapRenderer mapRenderer;
-    private ScalingViewport           viewport;
+    public ScalingViewport           viewport;
 
     //@TODO: decide what arguments the constructor should take in order to be extensible but not overly verbose (much like this lengthy comment which should end soon)
     public GameCamera(String mapName, Scaling scalingMode) {
@@ -49,8 +49,15 @@ public class GameCamera {
         this.camera.translate(v);
     }
 
+    public Vector2 getScreenSize() {
+        return new Vector2(
+            this.viewport.getScreenWidth(),
+            this.viewport.getScreenHeight()
+        );
+    }
+
     public void resizeViewport(int width, int height) {
-        this.viewport.update(width, height, true);
+        this.viewport.update(width, height);
         this.viewport.apply();
     }
 

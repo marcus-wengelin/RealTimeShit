@@ -22,7 +22,7 @@ public class InputHandler {
 
     private class MyInputProcessor extends InputAdapter {
         @Override public boolean scrolled(int amount) {
-            scroll = amount;
+            scroll += amount;
             return true;
         }
 
