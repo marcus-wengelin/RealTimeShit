@@ -1,8 +1,8 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.mygdx.utils.TextRenderer;
@@ -15,14 +15,15 @@ public class MyGdxGame extends ApplicationAdapter {
     private MyScreen screen;
 
     // everything here is in seconds
-    private float accumulator;
-    private float timeBetweenUpdates;
-    private float timeBetweenFrames;
-    private float maxTimeBetweenUpdates; // avoids spiral of death
-    private float frameLimiterTimer;
-    private float oneSecondTimer;
-    private int   updateCountLastSecond;
-    private int   frameCountLastSecond;
+    private float   accumulator;
+    private float   timeBetweenUpdates;
+    private float   timeBetweenFrames;
+    private float   maxTimeBetweenUpdates; // avoids spiral of death
+    private float   frameLimiterTimer;
+    private float   oneSecondTimer;
+    private int     updateCountLastSecond;
+    private int     frameCountLastSecond;
+    private boolean printLoopInfo;
 
     /* Called when the Application is first created. */
     @Override public void create() {
@@ -43,6 +44,7 @@ public class MyGdxGame extends ApplicationAdapter {
         this.oneSecondTimer        = 0;
         this.updateCountLastSecond = 0;
         this.frameCountLastSecond  = 0;
+        this.printLoopInfo         = false;
     }
 
     /* Called when the Application should render itself. Updates and renders
@@ -68,7 +70,9 @@ public class MyGdxGame extends ApplicationAdapter {
         }
 
         if (this.oneSecondTimer >= 1) {
-            // Gdx.app.log("MyGdxGame", String.format("%d UPS, %d FPS", this.updateCountLastSecond, this.frameCountLastSecond));
+            if (this.printLoopInfo) {
+                Gdx.app.log("MyGdxGame", String.format("%d UPS, %d FPS", this.updateCountLastSecond, this.frameCountLastSecond));
+            }
             this.updateCountLastSecond = 0;
             this.frameCountLastSecond  = 0;
             this.oneSecondTimer        = 0;

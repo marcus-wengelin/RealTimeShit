@@ -2,7 +2,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,15 +10,17 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
 
+//@TODO: bad class name, doesn't reflect that it also stores and renders the map
 public class GameCamera {
 
-    public SpriteBatch               batch;
-    public TiledMap                  map;
-    public IsometricTiledMapRenderer mapRenderer;
-    public OrthographicCamera        camera;
-    public ScalingViewport           viewport;
+    public  TiledMap                  map;
+    public  OrthographicCamera        camera;
 
-    public GameCamera(SpriteBatch batch, String mapName, Scaling scalingMode) {
+    private IsometricTiledMapRenderer mapRenderer;
+    private ScalingViewport           viewport;
+
+    //@TODO: decide what arguments the constructor should take in order to be extensible but not overly verbose (much like this lengthy comment which should end soon)
+    public GameCamera(String mapName, Scaling scalingMode) {
         this.map   = new TmxMapLoader().load("maps/"+mapName+"/"+mapName+".tmx");
 
         MapProperties prop = map.getProperties();
@@ -27,9 +28,6 @@ public class GameCamera {
         int mapHeight = prop.get("height", Integer.class);
 
         this.camera = new OrthographicCamera(mapWidth, mapHeight);
-
-        this.batch = batch;
-        this.batch.setProjectionMatrix(this.camera.combined);
 
         this.mapRenderer = new IsometricTiledMapRenderer(this.map);
         this.mapRenderer.setView(this.camera);
@@ -40,16 +38,18 @@ public class GameCamera {
 
     public void update() {
         this.camera.update();
-        this.batch.setProjectionMatrix(this.camera.combined);
         this.mapRenderer.setView(this.camera);
     }
 
-    public void resizeViewport(int width, int height) {
-        this.viewport.update(width, height, true);
-        this.viewport.apply();
+    public void renderMap() {
+        this.mapRenderer.render();
     }
 
-    public void screenResize(int width, int height) {
+    public void move(Vector2 v) {
+        this.camera.translate(v);
+    }
+
+    public void resizeViewport(int width, int height) {
         this.viewport.update(width, height, true);
         this.viewport.apply();
     }
@@ -59,7 +59,6 @@ public class GameCamera {
     }
 
     public void dispose() {
-        this.batch.dispose();
         this.map.dispose();
         this.mapRenderer.dispose();
     }

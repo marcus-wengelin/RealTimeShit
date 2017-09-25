@@ -32,26 +32,19 @@ public class TestMapScreen extends MyScreen {
     public TestMapScreen(MyGdxGame game) {
         super(game);
 
-        this.gameCamera = new GameCamera(this.game.batch, "test", Scaling.none);
-        this.input = new InputHandler();
-        this.player = GoFactory.makePlayer(0, 0);
-        this.marker = GoFactory.makeMarker(0, 0);
+        this.input       = new InputHandler();
+        this.player      = GoFactory.makePlayer(0, 0);
+        this.marker      = GoFactory.makeMarker(0, 0);
         this.pathMarkers = new ArrayList<GameObject>();
 
+        this.gameCamera  = new GameCamera("test", Scaling.none);
         TextRenderer.setCamera(this.gameCamera.camera);
         PathFinder.setMap(this.gameCamera.map);
     }
 
     @Override public void update(float deltaTime) {
-        /*Gdx.app.debug("TestMapScreen", String.format(
-            "screensize: (%d,%d) %n"+
-            "worldsize: (%f,%f) %n",
-            this.viewport.getScreenWidth(), this.viewport.getScreenHeight(),
-            this.viewport.getWorldWidth(), this.viewport.getWorldHeight())
-        );*/
-
         if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
-            this.gameCamera.camera.translate(-this.input.mouseDrag.x, this.input.mouseDrag.y);
+            this.gameCamera.move(new Vector2(-this.input.mouseDrag.x, this.input.mouseDrag.y));
         }
 
         //@TODO: scrolling is broken
@@ -60,25 +53,24 @@ public class TestMapScreen extends MyScreen {
             int viewportHeight = Gdx.graphics.getHeight()+this.input.scroll*10;
             this.gameCamera.resizeViewport(viewportWidth, viewportHeight);
         }
-
         this.gameCamera.update();
+        this.game.batch.setProjectionMatrix(this.gameCamera.camera.combined);
 
         if (Gdx.input.isButtonPressed(0)) {
             Vector2 worldCoords = this.gameCamera.screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-            //Vector2 worldCoords = this.viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             marker.setCell(IsoMath.orthoWorldToIso(worldCoords));
             ArrayList<GridPoint2> pathCells = this.player.moveTo(marker.getCell());
             pathMarkers.clear();
             for (GridPoint2 n : pathCells) pathMarkers.add(GoFactory.makeMarker(n.x, n.y));
         }
-
         this.player.update(deltaTime);
+
         this.input.resetInputs();
     }
 
     @Override public void render(float alpha) {
-        this.gameCamera.mapRenderer.render();
-        SpriteBatch batch = this.gameCamera.batch;
+        this.gameCamera.renderMap();
+        SpriteBatch batch = this.game.batch;
         batch.begin();
         this.marker.render(batch, alpha);
         for (GameObject go : pathMarkers) go.render(batch, alpha);
@@ -94,7 +86,7 @@ public class TestMapScreen extends MyScreen {
     @Override public void resume() {}
 
     @Override public void resize(int width, int height) {
-        this.gameCamera.screenResize(width, height);
+        this.gameCamera.resizeViewport(width, height);
     }
 
     @Override public void dispose() {

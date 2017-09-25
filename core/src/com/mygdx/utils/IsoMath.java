@@ -105,6 +105,7 @@ public class IsoMath {
      * @param GridPoint2    grid coordinates
      * @return Vector2      screen coordinates
      */
+    //@TODO: this method is not used anywhere, remove it?
     public static Vector2 gridToScreen(GridPoint2 cell) {
         return new Vector2(
             (cell.x + cell.y) * TILE_WIDTH/2f,
@@ -119,6 +120,7 @@ public class IsoMath {
     * @return Vector2   screen coordinates
     *
     */
+    //@TODO: this method is not used anywhere, remove it?
     public static Vector2 worldToScreen(Vector2 position) {
         return new Vector2(
             (position.x + position.y * TILE_WIDTH/TILE_HEIGHT),
