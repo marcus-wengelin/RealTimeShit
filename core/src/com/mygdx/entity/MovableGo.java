@@ -20,7 +20,6 @@ public class MovableGo extends AnimatedGo {
     private Vector2               previousPosition;
     private ArrayList<GridPoint2> path;
     private float                 speed; // units per second (a cell is 1x1)
-    private long                  timeBefore;
 
     public MovableGo(GridPoint2 origin, Hashtable<GoState, Animation<TextureRegion>> animTable,
                      ArrayList<GoState> allowedStates, GoState startingState, float speed) {
@@ -43,11 +42,10 @@ public class MovableGo extends AnimatedGo {
             this.path.remove(0);
         }
 
-        this.timeBefore = System.currentTimeMillis();
         return this.path;
     }
 
-    //@TODO: cleanup
+    //@TODO: fix the final animation flipping issue
     @Override public void update(float dt) {
         if (!this.path.isEmpty()) {
 
@@ -56,33 +54,21 @@ public class MovableGo extends AnimatedGo {
                                 IsoMath.isWestOf(target,  this.position);
             boolean moveVert  = IsoMath.isNorthOf(target, this.position) ||
                                 IsoMath.isSouthOf(target, this.position);
-            if (moveHoriz && moveVert) {
-                //Gdx.app.debug("MovableGo", "moving diagonally");
+            if (this.position.equals(target)) {
+                this.path.remove(0);
+            } else if (moveHoriz && moveVert) {
                 float diagSpeed = 1f/(float)Math.sqrt(2);
                 this.position.x = moveTowards(this.position.x, target.x, speed*diagSpeed*dt);
                 this.position.y = moveTowards(this.position.y, target.y, speed*diagSpeed*dt);
             } else if (moveHoriz) {
-                //Gdx.app.debug("MovableGo", "move horizontally");
                 this.position.x = moveTowards(this.position.x, target.x, this.speed*dt);
-            } else if (moveVert) {
-                //Gdx.app.debug("MovableGo", "move vertically");
-                this.position.y = moveTowards(this.position.y, target.y, this.speed*dt);
-            }
-            if (this.position.equals(target)) {
-                //Gdx.app.debug("MovableGo", ""+(System.currentTimeMillis()-timeBefore));
-                this.timeBefore = System.currentTimeMillis();
-                this.path.remove(0);
-            }
-
-            //@TODO: the animation states are incorrect sometimes because
-            // moveVert and moveHoriz lie!!!
-            if (moveVert) {
-                this.currentState = IsoMath.isSouthOf(target, this.position) ?
-                                    GoState.MOVING_N : GoState.MOVING_S;
-            } else if (moveHoriz) {
                 this.currentState = IsoMath.isWestOf(target, this.position) ?
                                     GoState.MOVING_E : GoState.MOVING_W;
-            } else {} // don't change state because we haven't moved
+            } else if (moveVert) {
+                this.position.y = moveTowards(this.position.y, target.y, this.speed*dt);
+                this.currentState = IsoMath.isSouthOf(target, this.position) ?
+                                    GoState.MOVING_N : GoState.MOVING_S;
+            }
         }
         super.update(dt);
         this.previousPosition = this.position.cpy();
@@ -102,5 +88,4 @@ public class MovableGo extends AnimatedGo {
         }
         return origin;
     }
-
 }
