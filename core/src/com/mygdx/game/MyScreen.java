@@ -12,6 +12,7 @@ abstract public class MyScreen {
     public abstract void render(float alpha);
     public abstract void pause();
     public abstract void resume();
+    public abstract void resize(int width, int height);
     public abstract void dispose();
 
 }

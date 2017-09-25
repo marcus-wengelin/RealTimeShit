@@ -34,6 +34,7 @@ public class TestMapScreen extends MyScreen {
         this.mapRenderer = new IsometricTiledMapRenderer(this.map);
         this.camera      = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.mapRenderer.setView(this.camera);
+        this.game.batch.setProjectionMatrix(this.camera.combined);
         this.input = new InputHandler();
         this.player = GoFactory.makePlayer(0, 0);
         this.marker = GoFactory.makeMarker(0, 0);
@@ -42,23 +43,29 @@ public class TestMapScreen extends MyScreen {
         PathFinder.setMap(this.map);
     }
 
-    public void update(float deltaTime) {
-        float dx       = 0;
-        float dy       = 0;
-        float camSpeed = 5;
+    @Override public void update(float deltaTime) {
+        if (!this.input.mouseDrag.isZero()) {
+            this.camera.translate(-this.input.mouseDrag.x*10, this.input.mouseDrag.y*10);
+            Gdx.app.debug("TestMapScreen", "detected mouse drag "+this.input.mouseDrag);
+        }
 
-        if (Gdx.input.isKeyPressed(Keys.W)) dy += camSpeed/2f;
+/*        if (Gdx.input.isKeyPressed(Keys.W)) dy += camSpeed/2f;
         if (Gdx.input.isKeyPressed(Keys.A)) dx -= camSpeed;
         if (Gdx.input.isKeyPressed(Keys.S)) dy -= camSpeed/2f;
         if (Gdx.input.isKeyPressed(Keys.D)) dx += camSpeed;
 
-        this.camera.translate(dx, dy);
-        this.camera.zoom += this.input.scroll()*0.2f;
+        if (dx != 0 || dy != 0)*/
+
+        if (this.input.scroll != 0) {
+            int viewportWidth  = Gdx.graphics.getWidth() *this.input.scroll;
+            int viewportHeight = Gdx.graphics.getHeight()*this.input.scroll;
+            this.camera = new OrthographicCamera(viewportWidth, viewportHeight);
+        }
+
         this.camera.update();
+        this.player.update(deltaTime);
         this.game.batch.setProjectionMatrix(this.camera.combined);
         this.mapRenderer.setView(this.camera);
-
-        this.player.update(deltaTime);
 
         if (Gdx.input.isButtonPressed(0)) {
             Vector3 worldCoords = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -71,7 +78,7 @@ public class TestMapScreen extends MyScreen {
         this.input.resetInputs();
     }
 
-    public void render(float alpha) {
+    @Override public void render(float alpha) {
         this.mapRenderer.render();
         this.game.batch.begin();
         this.marker.render(this.game.batch, alpha);
@@ -84,10 +91,14 @@ public class TestMapScreen extends MyScreen {
         this.game.batch.end();
     }
 
-    public void pause() {}
-    public void resume() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
 
-    public void dispose() {
+    @Override public void resize(int width, int height) {
+        this.camera = new OrthographicCamera(width, height);
+    }
+
+    @Override public void dispose() {
         this.map.dispose();
         this.mapRenderer.dispose();
     }

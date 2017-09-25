@@ -90,6 +90,7 @@ public class MyGdxGame extends ApplicationAdapter {
     /* Called when the Application is resized. */
     @Override public void resize(int width, int height) {
         Gdx.app.log("MyGdxGame", "the window was resized");
+        this.screen.resize(width, height);
     }
 
     /* Called when the Application is destroyed. */

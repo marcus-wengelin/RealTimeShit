@@ -2,35 +2,41 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector2;
 
 public class InputHandler {
 
-    private int scroll;
-    public int mouseX;
-    public int mouseY;
+    public int     scroll;
+    public int     mouseX;
+    public int     mouseY;
+    public Vector2 mouseDrag;
 
     public InputHandler() {
-        this.scroll = 0;
-        Gdx.input.setInputProcessor(new MyInputProcesser());
-    }
-
-    public int scroll() {
-        return this.scroll;
+        this.scroll    = 0;
+        this.mouseDrag = Vector2.Zero;
+        Gdx.input.setInputProcessor(new MyInputProcessor());
     }
 
     public void resetInputs() {
         this.scroll = 0;
+        this.mouseDrag.setZero();
     }
 
-    private class MyInputProcesser extends InputAdapter {
-        public boolean scrolled(int amount) {
+    private class MyInputProcessor extends InputAdapter {
+        @Override public boolean scrolled(int amount) {
             scroll = amount;
             return true;
         }
 
-        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             mouseX = screenX;
             mouseY = screenY;
+            return true;
+        }
+
+        @Override public boolean touchDragged(int screenX, int screenY, int pointer) {
+            mouseDrag.x = Gdx.input.getDeltaX();
+            mouseDrag.y = Gdx.input.getDeltaY();
             return true;
         }
     }
