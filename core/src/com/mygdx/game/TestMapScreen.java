@@ -45,7 +45,7 @@ public class TestMapScreen extends MyScreen {
 
     @Override public void update(float deltaTime) {
         if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
-            this.camera.translate(-this.input.mouseDrag.x*10, this.input.mouseDrag.y*10);
+            this.camera.translate(-this.input.mouseDrag.x, this.input.mouseDrag.y);
             Gdx.app.debug("TestMapScreen", "detected mouse drag "+this.input.mouseDrag);
         }
 
