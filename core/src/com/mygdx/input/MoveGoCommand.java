@@ -8,12 +8,12 @@ import com.mygdx.entity.MovableGo;
 /**
  * Command for moving GameObjects
  */
-public class MoveCommand implements Command {
+public class MoveGoCommand implements Command {
 
     private GameObject go;
     private GridPoint2 dst;
 
-    public MoveCommand(GameObject go, GridPoint2 dst) {
+    public MoveGoCommand(GameObject go, GridPoint2 dst) {
         this.go  = go;
         this.dst = dst;
     }

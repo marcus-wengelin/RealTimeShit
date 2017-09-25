@@ -16,7 +16,7 @@ public class GameCamera {
     public  TiledMap                  map;
     public  OrthographicCamera        camera;
 
-    private IsometricTiledMapRenderer mapRenderer;
+    public IsometricTiledMapRenderer mapRenderer;
     public ScalingViewport           viewport;
 
     //@TODO: decide what arguments the constructor should take in order to be extensible but not overly verbose (much like this lengthy comment which should end soon)

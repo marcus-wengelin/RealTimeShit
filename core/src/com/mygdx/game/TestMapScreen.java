@@ -19,24 +19,23 @@ import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.utils.*;
 import com.mygdx.utils.TextRenderer.Alignment;
 import com.mygdx.entity.*;
+import com.mygdx.input.InputHandler;
 
 import java.util.ArrayList;
 
-public class TestMapScreen extends MyScreen {
+public class TestMapScreen extends MyScreen implements WorldApi {
 
     private GameCamera            gameCamera;
     private InputHandler          input;
 	private MovableGo             player;
     private GameObject            marker;
-    private ArrayList<GameObject> pathMarkers;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
 
-        this.input       = new InputHandler();
+        this.input       = new InputHandler((WorldApi)this);
         this.player      = GoFactory.makePlayer(0, 0);
         this.marker      = GoFactory.makeMarker(0, 0);
-        this.pathMarkers = new ArrayList<GameObject>();
 
         this.gameCamera  = new GameCamera("test", Scaling.fit);
         TextRenderer.setCamera(this.gameCamera.camera);
@@ -44,12 +43,12 @@ public class TestMapScreen extends MyScreen {
     }
 
     @Override public void update(float deltaTime) {
-        if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
+        /*if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
             this.gameCamera.move(
                 new Vector2(-this.input.mouseDrag.x, this.input.mouseDrag.y)
                 .scl(this.gameCamera.camera.zoom)
             );
-        }
+        }*/
 
         if (this.input.scroll != 0) {
             float newZoom = this.gameCamera.camera.zoom;
@@ -60,16 +59,6 @@ public class TestMapScreen extends MyScreen {
         this.gameCamera.update();
         this.game.batch.setProjectionMatrix(this.gameCamera.camera.combined);
 
-        if (Gdx.input.isButtonPressed(1)) {
-            Vector2 worldCoords = this.gameCamera.screenToWorld(
-                new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-            GridPoint2 cell = IsoMath.orthoWorldToIso(worldCoords);
-            marker.setCell(cell);
-            Gdx.app.debug("TestMapScreen", cell.toString());
-            ArrayList<GridPoint2> pathCells = this.player.moveTo(marker.getCell());
-            pathMarkers.clear();
-            for (GridPoint2 n : pathCells) pathMarkers.add(GoFactory.makeMarker(n.x, n.y));
-        }
         this.player.update(deltaTime);
 
         this.input.resetInputs();
@@ -80,7 +69,6 @@ public class TestMapScreen extends MyScreen {
         SpriteBatch batch = this.game.batch;
         batch.begin();
         this.marker.render(batch, alpha);
-        for (GameObject go : pathMarkers) go.render(batch, alpha);
         this.player.render(batch, alpha);
         assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
         assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
@@ -100,4 +88,23 @@ public class TestMapScreen extends MyScreen {
         this.gameCamera.dispose();
     }
 
+    /* API CODE - BEWARE */
+
+    @Override public GameObject getSelectedUnit() {
+        return this.player;
+    }
+
+    @Override public GridPoint2 mouseToGrid(int x, int y) {
+        Vector2 wcoords = this.gameCamera.screenToWorld(
+            new Vector2(x, y)
+        );
+        GridPoint2 cell = IsoMath.orthoWorldToIso(wcoords);
+        marker.setCell(cell); // @TODO: only here for dbg atm
+        return cell;
+    }
+
+    @Override public OrthographicCamera getOrthoCamera() {
+        return this.gameCamera.camera;
+
+    }
 }
