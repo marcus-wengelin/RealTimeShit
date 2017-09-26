@@ -66,7 +66,7 @@ public class TestMapScreen extends MyScreen implements WorldApi {
         this.mapRenderer.setView(this.camera);
         this.game.batch.setProjectionMatrix(this.camera.combined);
         this.player.update(deltaTime);
-        this.input.resetInputs();
+        // this.input.resetInputs();
     }
 
     @Override public void render(float alpha) {
