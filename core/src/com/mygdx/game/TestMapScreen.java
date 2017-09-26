@@ -92,6 +92,7 @@ public class TestMapScreen extends MyScreen implements WorldApi {
     @Override public void resize(int width, int height) {
         this.viewport.update(width, height);
         this.viewport.apply();
+        this.hud.resizeViewport(width, height);
     }
 
     @Override public void dispose() {
