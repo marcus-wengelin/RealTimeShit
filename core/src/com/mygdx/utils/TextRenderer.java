@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
 
 public class TextRenderer {
 
@@ -20,10 +18,8 @@ public class TextRenderer {
     }
 
     private static boolean                       initted;
-    private static SpriteBatch                   batch;
     private static Hashtable<String, BitmapFont> fonts;
     private static GlyphLayout                   layout;
-    private static OrthographicCamera            camera;
 
     private TextRenderer() {}
 
@@ -32,16 +28,6 @@ public class TextRenderer {
         initted = true;
         fonts   = new Hashtable<String, BitmapFont>();
         layout  = new GlyphLayout();
-    }
-
-    public static void setSpriteBatch(SpriteBatch batch) {
-        assert initted;
-        TextRenderer.batch = batch;
-    }
-
-    public static void setCamera(OrthographicCamera camera) {
-        assert initted;
-        TextRenderer.camera = camera;
     }
 
     public static void loadFonts(String path) {
@@ -58,20 +44,20 @@ public class TextRenderer {
         return fonts.get(fontName);
     }
 
-    // @TODO: parameter names x and y are bad
-    public static boolean drawOnScreen(String fontName, String text, float x, float y, Alignment alignment) {
-        assert initted;
-        if (x < 0 || x > 1 || y < 0 || y > 1) return false;
-        Vector3 pixelCoords = new Vector3(
-            x     * Gdx.graphics.getWidth(),
-            (1-y) * Gdx.graphics.getHeight(), // flip Y axis
-            0
-        );
-        Vector3 worldCoords = camera.unproject(pixelCoords);
-        return drawOnWorld(fontName, text, worldCoords.x, worldCoords.y, alignment);
+    public static boolean draw(SpriteBatch batch, String fontName, String text, float x, float y, Alignment alignment) {
+        return drawOnWorld(batch, fontName, text, x, y, alignment);
     }
 
-    public static boolean drawOnWorld(String fontName, String text, float x, float y, Alignment alignment) {
+    // @TODO: parameter names x and y are bad
+    public static boolean drawOnScreen(SpriteBatch batch, String fontName, String text, float x, float y, Alignment alignment) {
+        assert initted;
+        if (x < 0 || x > 1 || y < 0 || y > 1) return false;
+        float newX = x     * Gdx.graphics.getWidth();
+        float newY = (1-y) * Gdx.graphics.getHeight(); // flip Y axis
+        return drawOnWorld(batch, fontName, text, newX, newY, alignment);
+    }
+
+    public static boolean drawOnWorld(SpriteBatch batch, String fontName, String text, float x, float y, Alignment alignment) {
         assert initted;
         BitmapFont font = fonts.get(fontName);
         if (font == null) return false;
@@ -121,7 +107,6 @@ public class TextRenderer {
         for (BitmapFont f : fonts.values()) f.dispose();
         fonts.clear();
         initted = false;
-        batch   = null;
         fonts   = null;
         layout  = null;
     }

@@ -32,6 +32,7 @@ public class TestMapScreen extends MyScreen implements WorldApi {
     private OrthographicCamera        camera;
     private IsometricTiledMapRenderer mapRenderer;
     private ScalingViewport           viewport;
+    private WorldHud                  hud;
 
 	private MovableGo                 player;
     private GameObject                marker;
@@ -53,31 +54,29 @@ public class TestMapScreen extends MyScreen implements WorldApi {
 
         this.viewport = new ScalingViewport(Scaling.fit, Gdx.graphics.getWidth(),
                                             Gdx.graphics.getHeight(), this.camera);
-        TextRenderer.setCamera(this.camera);
         PathFinder.setMap(this.map);
+
+        this.hud = new WorldHud(this.game.batch);
 
         this.player = GoFactory.makePlayer(0, 0);
         this.marker = GoFactory.makeMarker(0, 0);
     }
 
     @Override public void update(float deltaTime) {
-        this.camera.update();
-        this.mapRenderer.setView(this.camera);
-        this.game.batch.setProjectionMatrix(this.camera.combined);
         this.player.update(deltaTime);
+        this.camera.update();
     }
 
     @Override public void render(float alpha) {
+        this.mapRenderer.setView(this.camera);
         this.mapRenderer.render();
         SpriteBatch batch = this.game.batch;
+        batch.setProjectionMatrix(this.camera.combined);
         batch.begin();
         this.marker.render(batch, alpha);
         this.player.render(batch, alpha);
-        assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
-        assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
-        assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
-        assert TextRenderer.drawOnScreen("fipps_modified", "*", 1, 0, Alignment.TOP_LEFT);
         batch.end();
+        this.hud.render();
     }
 
     @Override public void pause() {}

@@ -32,7 +32,6 @@ public class MyGdxGame extends ApplicationAdapter {
 
         this.batch  = new SpriteBatch();
         TextRenderer.init();
-        TextRenderer.setSpriteBatch(this.batch);
         TextRenderer.loadFonts("fonts");
         this.screen = new TestMapScreen(this);
 
