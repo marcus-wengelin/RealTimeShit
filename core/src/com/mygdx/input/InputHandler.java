@@ -31,7 +31,7 @@ public class InputHandler {
     private class MyInputProcessor extends InputAdapter {
         @Override public boolean scrolled(int amount) {
             scroll += amount;
-            new ZoomCameraCommand(api.getOrthoCamera(), scroll).execute();
+            new ZoomCameraCommand(api.getOrthoCamera(), amount).execute();
             return true;
         }
 

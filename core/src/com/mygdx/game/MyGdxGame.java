@@ -110,5 +110,4 @@ public class MyGdxGame extends ApplicationAdapter {
         this.screen.dispose();
         this.screen = screen;
     }
-
 }
