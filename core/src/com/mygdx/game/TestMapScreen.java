@@ -37,6 +37,8 @@ public class TestMapScreen extends MyScreen implements WorldApi {
 	private MovableGo                 player;
     private GameObject                marker;
 
+    private ArrayList<GameObject>     selectedUnits;
+
     public TestMapScreen(MyGdxGame game) {
         super(game);
         this.input = new InputHandler((WorldApi)this);
@@ -60,6 +62,8 @@ public class TestMapScreen extends MyScreen implements WorldApi {
 
         this.player = GoFactory.makePlayer(0, 0);
         this.marker = GoFactory.makeMarker(0, 0);
+
+        this.selectedUnits = new ArrayList<GameObject>();
     }
 
     @Override public void update(float deltaTime) {
@@ -74,6 +78,9 @@ public class TestMapScreen extends MyScreen implements WorldApi {
         batch.setProjectionMatrix(this.camera.combined);
         batch.begin();
         this.marker.render(batch, alpha);
+        for (GameObject unit : this.selectedUnits) {
+            GoFactory.makeSelectedMarker(unit.getCell().x, unit.getCell().y).render(batch, alpha);
+        }
         this.player.render(batch, alpha);
         batch.end();
         this.hud.render();
@@ -94,8 +101,21 @@ public class TestMapScreen extends MyScreen implements WorldApi {
 
     /* API CODE - BEWARE */
 
-    @Override public GameObject getSelectedUnit() {
-        return this.player;
+    @Override public ArrayList<GameObject> getUnitsInCell(GridPoint2 cell) {
+        // @TODO: Pretty useless atm since it only checks player
+        ArrayList<GameObject> l = new ArrayList<GameObject>();
+        if (this.player.getCell().equals(cell))
+            l.add(this.player);
+        return l;
+    }
+
+    @Override public void setSelectedUnits(ArrayList<GameObject> selectedUnits) {
+        Gdx.app.debug("TestMapScreen", "Setting selected units ("+selectedUnits.size()+")");
+        this.selectedUnits = selectedUnits;
+    }
+
+    @Override public ArrayList<GameObject> getSelectedUnits() {
+        return this.selectedUnits;
     }
 
     @Override public GridPoint2 mouseToGrid(int x, int y) {

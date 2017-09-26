@@ -2,6 +2,8 @@ package com.mygdx.input;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
+import com.mygdx.game.WorldApi;
+
 public class MoveCameraCommand implements Command {
 
     private OrthographicCamera camera;
@@ -12,7 +14,7 @@ public class MoveCameraCommand implements Command {
         this.y = y; 
     }
 
-    @Override public boolean execute() {
+    @Override public boolean execute(WorldApi api) {
         float nx = -this.x * camera.zoom;
         float ny =  this.y * camera.zoom;
         this.camera.translate(nx, ny);

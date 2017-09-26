@@ -54,4 +54,11 @@ public class GoFactory {
         return new GameObject(tx, new GridPoint2(col, row), allowedStates, GoState.IDLE);
     }
 
+    public static GameObject makeSelectedMarker(int col, int row) {
+        Texture tx = new Texture("sprites/marker_selected.png");
+        ArrayList<GoState> allowedStates = new ArrayList<GoState>();
+        allowedStates.add(GoState.IDLE);
+        return new GameObject(tx, new GridPoint2(col, row), allowedStates, GoState.IDLE);
+    }
+
 }

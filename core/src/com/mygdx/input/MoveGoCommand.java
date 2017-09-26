@@ -2,6 +2,7 @@ package com.mygdx.input;
 
 import com.badlogic.gdx.math.GridPoint2;
 
+import com.mygdx.game.WorldApi;
 import com.mygdx.entity.GameObject;
 import com.mygdx.entity.MovableGo;
 
@@ -18,7 +19,7 @@ public class MoveGoCommand implements Command {
         this.dst = dst;
     }
 
-    @Override public boolean execute() {
+    @Override public boolean execute(WorldApi api) {
         if (this.go instanceof MovableGo) {
             ((MovableGo) this.go).moveTo(dst);
             return true;
