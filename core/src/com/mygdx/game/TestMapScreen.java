@@ -38,10 +38,9 @@ public class TestMapScreen extends MyScreen implements WorldApi {
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
-        this.input       = new InputHandler((WorldApi)this);
+        this.input = new InputHandler((WorldApi)this);
 
-        this.map   = new TmxMapLoader().load("maps/test/test.tmx");
-
+        this.map = new TmxMapLoader().load("maps/test/test.tmx");
         MapProperties prop = map.getProperties();
         this.worldSize = new Vector2(
             prop.get("width",  Integer.class),
@@ -57,8 +56,8 @@ public class TestMapScreen extends MyScreen implements WorldApi {
         TextRenderer.setCamera(this.camera);
         PathFinder.setMap(this.map);
 
-        this.player      = GoFactory.makePlayer(0, 0);
-        this.marker      = GoFactory.makeMarker(0, 0);
+        this.player = GoFactory.makePlayer(0, 0);
+        this.marker = GoFactory.makeMarker(0, 0);
     }
 
     @Override public void update(float deltaTime) {
@@ -66,7 +65,6 @@ public class TestMapScreen extends MyScreen implements WorldApi {
         this.mapRenderer.setView(this.camera);
         this.game.batch.setProjectionMatrix(this.camera.combined);
         this.player.update(deltaTime);
-        this.input.resetInputs();
     }
 
     @Override public void render(float alpha) {
@@ -77,8 +75,8 @@ public class TestMapScreen extends MyScreen implements WorldApi {
         this.player.render(batch, alpha);
         assert TextRenderer.drawOnWorld("fipps_modified", "hi!", -150, -150, Alignment.CENTER);
         assert TextRenderer.drawOnWorld("fipps_modified", "i'm here", 500, 0, Alignment.TOP_RIGHT);
-        //assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
-        //assert TextRenderer.drawOnScreen("fipps_modified", "*", 1, 0, Alignment.TOP_LEFT);
+        assert TextRenderer.drawOnScreen("fipps_modified", "--- HUD ---", 0.5f, 0.95f, Alignment.BOTTOM);
+        assert TextRenderer.drawOnScreen("fipps_modified", "*", 1, 0, Alignment.TOP_LEFT);
         batch.end();
     }
 

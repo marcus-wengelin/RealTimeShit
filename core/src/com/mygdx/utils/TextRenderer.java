@@ -109,7 +109,7 @@ public class TextRenderer {
             case BOTTOM_RIGHT:
                 break;
             default:
-                // going here means there is an alignment we do not account for
+                // there is an alignment we don't account for
                 assert false;
         }
         font.draw(batch, layout, x, y);
