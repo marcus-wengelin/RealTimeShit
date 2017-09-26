@@ -13,8 +13,8 @@ public class Constants {
 	public static final boolean ENABLE_VSYNC     = false;
 	public static final int     LOG_LEVEL        = Logger.DEBUG; // DEBUG, ERROR, INFO, NONE
 
-	public static final int   UPDATES_PER_SECOND       = 60;
-	public static final int   MAX_FRAMES_PER_SECOND    = 300;
+	public static final int   UPDATES_PER_SECOND       = 30;
+	public static final int   MAX_FRAMES_PER_SECOND    = 100;
 	public static final float MAX_TIME_BETWEEN_UPDATES = 0.25f; // in seconds
 
 	//@TODO: cells are square, replace these with TILE_SIZE?

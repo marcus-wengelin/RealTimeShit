@@ -128,6 +128,8 @@ public class IsoMath {
         );
     }
 
+    //@TODO: When selecting a tile outside of the map this function
+    // returns invalid coordinates.
     public static GridPoint2 orthoWorldToIso(Vector2 position) {
         return new GridPoint2(
             (int) ((position.x/TILE_WIDTH - position.y/(TILE_HEIGHT/2f)) / 2f + 0.5f),

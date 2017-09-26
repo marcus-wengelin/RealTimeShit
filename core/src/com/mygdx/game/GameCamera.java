@@ -45,6 +45,13 @@ public class GameCamera {
         this.mapRenderer.render();
     }
 
+    public Vector2 getWorldSize() {
+        MapProperties prop = map.getProperties();
+        int mapWidth  = prop.get("width",  Integer.class);
+        int mapHeight = prop.get("height", Integer.class);
+        return new Vector2(mapWidth, mapHeight);
+    }
+
     public void move(Vector2 v) {
         this.camera.translate(v);
     }

@@ -3,6 +3,7 @@ package com.mygdx.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.GridPoint2;
 
 import com.mygdx.game.WorldApi;
 
@@ -30,19 +31,27 @@ public class InputHandler {
     private class MyInputProcessor extends InputAdapter {
         @Override public boolean scrolled(int amount) {
             scroll += amount;
+            new ZoomCameraCommand(api.getOrthoCamera(), scroll).execute();
             return true;
         }
 
         @Override public boolean touchDragged(int screenX, int screenY, int pointer) {
-            new MoveCameraCommand(api.getOrthoCamera(),
-                 Gdx.input.getDeltaX(), Gdx.input.getDeltaY()
-            ).execute();
+            if (Gdx.input.isButtonPressed(0)) {
+                new MoveCameraCommand(api.getOrthoCamera(),
+                    Gdx.input.getDeltaX(), Gdx.input.getDeltaY()
+                ).execute();
+            } else return false;
             return true;
         }
 
         @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             if (button != 1) return false;
-            new MoveGoCommand(api.getSelectedUnit(), api.mouseToGrid(screenX, screenY)).execute();
+            GridPoint2 cell = api.mouseToGrid(screenX, screenY);
+            /* cell == null if outside of map */
+            if (cell != null)
+                new MoveGoCommand(api.getSelectedUnit(), cell).execute();
+            else
+                return false;
             return true;
         }
     }

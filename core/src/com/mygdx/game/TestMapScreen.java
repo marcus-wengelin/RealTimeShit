@@ -43,24 +43,9 @@ public class TestMapScreen extends MyScreen implements WorldApi {
     }
 
     @Override public void update(float deltaTime) {
-        /*if (!this.input.mouseDrag.isZero() && Gdx.input.isButtonPressed(0)) {
-            this.gameCamera.move(
-                new Vector2(-this.input.mouseDrag.x, this.input.mouseDrag.y)
-                .scl(this.gameCamera.camera.zoom)
-            );
-        }*/
-
-        if (this.input.scroll != 0) {
-            float newZoom = this.gameCamera.camera.zoom;
-            newZoom += this.input.scroll/2.5f;
-            newZoom = MathUtils.clamp(newZoom, 1, 2);
-            this.gameCamera.camera.zoom = newZoom;
-        }
         this.gameCamera.update();
         this.game.batch.setProjectionMatrix(this.gameCamera.camera.combined);
-
         this.player.update(deltaTime);
-
         this.input.resetInputs();
     }
 
