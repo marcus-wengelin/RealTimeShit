@@ -25,32 +25,52 @@ import java.util.ArrayList;
 
 public class TestMapScreen extends MyScreen implements WorldApi {
 
-    private GameCamera            gameCamera;
-    private InputHandler          input;
-	private MovableGo             player;
-    private GameObject            marker;
+    private InputHandler              input; // @TODO: move into MyGdxGame
+
+    private TiledMap                  map;
+    private Vector2                   worldSize;
+    private OrthographicCamera        camera;
+    private IsometricTiledMapRenderer mapRenderer;
+    private ScalingViewport           viewport;
+
+	private MovableGo                 player;
+    private GameObject                marker;
 
     public TestMapScreen(MyGdxGame game) {
         super(game);
-
         this.input       = new InputHandler((WorldApi)this);
+
+        this.map   = new TmxMapLoader().load("maps/test/test.tmx");
+
+        MapProperties prop = map.getProperties();
+        this.worldSize = new Vector2(
+            prop.get("width",  Integer.class),
+            prop.get("height", Integer.class)
+        );
+        this.camera = new OrthographicCamera(this.worldSize.x, this.worldSize.y);
+
+        this.mapRenderer = new IsometricTiledMapRenderer(this.map);
+        this.mapRenderer.setView(this.camera);
+
+        this.viewport = new ScalingViewport(Scaling.fit, Gdx.graphics.getWidth(),
+                                            Gdx.graphics.getHeight(), this.camera);
+        TextRenderer.setCamera(this.camera);
+        PathFinder.setMap(this.map);
+
         this.player      = GoFactory.makePlayer(0, 0);
         this.marker      = GoFactory.makeMarker(0, 0);
-
-        this.gameCamera  = new GameCamera("test", Scaling.fit);
-        TextRenderer.setCamera(this.gameCamera.camera);
-        PathFinder.setMap(this.gameCamera.map);
     }
 
     @Override public void update(float deltaTime) {
-        this.gameCamera.update();
-        this.game.batch.setProjectionMatrix(this.gameCamera.camera.combined);
+        this.camera.update();
+        this.mapRenderer.setView(this.camera);
+        this.game.batch.setProjectionMatrix(this.camera.combined);
         this.player.update(deltaTime);
         this.input.resetInputs();
     }
 
     @Override public void render(float alpha) {
-        this.gameCamera.renderMap();
+        this.mapRenderer.render();
         SpriteBatch batch = this.game.batch;
         batch.begin();
         this.marker.render(batch, alpha);
@@ -66,11 +86,13 @@ public class TestMapScreen extends MyScreen implements WorldApi {
     @Override public void resume() {}
 
     @Override public void resize(int width, int height) {
-        this.gameCamera.resizeViewport(width, height);
+        this.viewport.update(width, height);
+        this.viewport.apply();
     }
 
     @Override public void dispose() {
-        this.gameCamera.dispose();
+        this.map.dispose();
+        this.mapRenderer.dispose();
     }
 
     /* API CODE - BEWARE */
@@ -80,7 +102,7 @@ public class TestMapScreen extends MyScreen implements WorldApi {
     }
 
     @Override public GridPoint2 mouseToGrid(int x, int y) {
-        Vector2 wcoords = this.gameCamera.screenToWorld(
+        Vector2 wcoords = this.viewport.unproject(
             new Vector2(x, y)
         );
         GridPoint2 cell = IsoMath.orthoWorldToIso(wcoords);
@@ -89,7 +111,7 @@ public class TestMapScreen extends MyScreen implements WorldApi {
     }
 
     @Override public OrthographicCamera getOrthoCamera() {
-        return this.gameCamera.camera;
+        return this.camera;
 
     }
 }

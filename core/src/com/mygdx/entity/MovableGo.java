@@ -75,10 +75,10 @@ public class MovableGo extends AnimatedGo {
     }
 
     @Override public void render(SpriteBatch batch, float alpha) {
-        Vector2 oldPosition = this.previousPosition.cpy();
+        Vector2 oldPreviousPosition = this.previousPosition.cpy();
         this.previousPosition.lerp(this.position, alpha);
-        super.render(batch, alpha); //@TODO: super bad! use linear interpolation
-        this.previousPosition = oldPosition;
+        super.render(batch, alpha);
+        this.previousPosition = oldPreviousPosition;
     }
 
     private float moveTowards(float origin, float goal, float value) {
